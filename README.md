@@ -2,6 +2,11 @@
 
 An open, reproducible reference implementation for turning an Xteink X3 into a once-a-day personal briefing reader. It extends the MIT-licensed CrossPoint Reader firmware with native Daily Cards V1, Inbox V2, a Today EPUB path, feedback receipts, cache-first recovery, scheduled wake handling, and a four-gray X3 sleep screen.
 
+**Repository release 0.1.0-alpha.2.** This maintenance release keeps the exact
+`1.6.2-xtinct.1` firmware bytes from alpha.1, adds clearer stability evidence,
+and makes the public Windows and Worker validation jobs deterministic. It is
+still a physical-X3-pending candidate, not a stable firmware declaration.
+
 This repository is the companion to the [X3 Preview & QA Lab](https://github.com/RO11/x3-preview-qa-lab). The Preview Lab models and tests the experience on Windows. This repository contains the device-side source and, once every release gate passes, the exact installable X3 image built from that source.
 
 > **Alpha software.** A passing simulator or QEMU run does not prove physical E-Ink waveforms, buttons, SD-card power-loss behavior, Wi-Fi/Bluetooth radio behavior, fragmented heap, watchdog timing, RTC wake, battery use, or recovery. Check the evidence table for the exact release before installing anything.

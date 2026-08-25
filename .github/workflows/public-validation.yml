@@ -26,7 +26,16 @@ jobs:
           python -B test/xtinct_feed_credential_policy/verify_source_contract.py
       - name: Simulator unit and contract tests
         working-directory: firmware/crosspoint-source/tools/x3-simulator
-        run: python -B -m unittest test_run_full_qa.py test_qemu_firmware.py test_network_fixture.py test_server.py -q
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $python = (Get-Command python -ErrorAction Stop).Source
+          $noQemuLocalAppData = Join-Path $env:RUNNER_TEMP 'x3-simulator-no-qemu'
+          New-Item -ItemType Directory -Path $noQemuLocalAppData -Force | Out-Null
+          $env:LOCALAPPDATA = $noQemuLocalAppData
+          $env:PATH = "$(Split-Path -Parent $python);$env:SystemRoot\System32;$env:SystemRoot"
+          & $python -B -m unittest test_run_full_qa.py test_qemu_firmware.py test_network_fixture.py test_server.py -q
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Portable-preview release tests
         working-directory: firmware/crosspoint-source/tools/x3-simulator/scripts
         run: python -B -m unittest test_release_engineering.py -q
@@ -40,7 +49,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: services/xtinct-feed-worker/package-lock.json
       - run: npm ci

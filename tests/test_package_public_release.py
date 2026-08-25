@@ -64,7 +64,7 @@ class PublicReleasePackagerTests(unittest.TestCase):
     def test_dependency_sbom_covers_every_vendored_library(self) -> None:
         identity = dict(package.ready27_cache.PINNED_PORTABLE_DEPENDENCY_SOURCE_IDENTITY)
         sbom = package.dependency_sbom(
-            "0.1.0-alpha.1",
+            "0.1.0-alpha.2",
             "1.6.2-xtinct.1",
             "a" * 64,
             identity,
