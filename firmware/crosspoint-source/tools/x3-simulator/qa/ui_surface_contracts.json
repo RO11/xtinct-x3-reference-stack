@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "forbidden_placeholders": [
+    "not simulated yet",
+    "This route proves preview-to-content navigation",
+    "EPUB pagination and exact text layout move to the shared native renderer tier"
+  ],
+  "surfaces": [
+    {
+      "id": "home",
+      "source_tokens": {"web/simulator-core.js": ["HOME_ITEMS", "case \"home\""], "web/x3-renderer.js": ["drawHome"]},
+      "test_tokens": ["home opens", "index movement wraps"]
+    },
+    {
+      "id": "files",
+      "source_tokens": {"web/simulator-core.js": ["case \"files\"", "fileIndex", "filePath", "delete-confirm"], "web/x3-renderer.js": ["drawFiles"]},
+      "test_tokens": ["Files listing", "recursive delete", "delete cancellation"]
+    },
+    {
+      "id": "recents",
+      "source_tokens": {"web/simulator-core.js": ["case \"recents\"", "recentIndex", "remove-recent-confirm"], "web/x3-renderer.js": ["drawRecents"]},
+      "test_tokens": ["Recents opens", "remove from Recents"]
+    },
+    {
+      "id": "txt-reader",
+      "source_tokens": {"web/simulator-core.js": ["case \"txt-reader\"", "readerPage", "readerProgress"], "web/x3-renderer.js": ["drawTxtReader"]},
+      "test_tokens": ["TXT reader pages", "TXT progress"]
+    },
+    {
+      "id": "epub-reader",
+      "source_tokens": {"web/simulator-core.js": ["case \"epub-reader\"", "readerSpine", "end-of-book"], "web/x3-renderer.js": ["drawEpubReader", "drawEndOfBook"]},
+      "test_tokens": ["EPUB crosses", "stale EPUB progress", "Today single spine"]
+    },
+    {
+      "id": "cards",
+      "source_tokens": {"web/simulator-core.js": ["case \"cards\""], "web/x3-renderer.js": ["drawCards"]},
+      "test_tokens": ["Cards and Inbox keep", "full Daily Cards run"]
+    },
+    {
+      "id": "inbox",
+      "source_tokens": {"web/simulator-core.js": ["case \"inbox\"", "inboxActions"], "web/x3-renderer.js": ["drawInboxPreview", "drawInboxList"]},
+      "test_tokens": ["Cards and Inbox keep", "cursor paging commits", "opening is best effort"]
+    },
+    {
+      "id": "sleep",
+      "source_tokens": {"web/simulator-core.js": ["case \"sleep\"", "decodeX3Bmp"], "web/x3-renderer.js": ["drawSleep"]},
+      "test_tokens": ["sleep BMP decoder", "power hold"]
+    },
+    {
+      "id": "file-transfer",
+      "source_tokens": {"web/simulator-core.js": ["case \"file-transfer\"", "transferStatus"], "web/x3-renderer.js": ["drawFileTransfer"]},
+      "test_tokens": ["File Transfer surface", "incomplete transfer"]
+    },
+    {
+      "id": "settings",
+      "source_tokens": {"web/simulator-core.js": ["case \"settings\"", "settingIndex", "daily-wake-status", "firmware-picker"], "web/x3-renderer.js": ["drawSettings", "drawDailyWakeStatus"]},
+      "test_tokens": ["Settings surface", "firmware picker"]
+    },
+    {
+      "id": "crash-report",
+      "source_tokens": {"web/simulator-core.js": ["case \"crash-report\"", "panicCleared"], "web/x3-renderer.js": ["drawCrashReport"]},
+      "test_tokens": ["Crash report surface", "sanitized crash"]
+    },
+    {
+      "id": "pocket-sync",
+      "source_tokens": {"web/simulator-core.js": ["case \"phone-sync\"", "pocketPhase", "pocketCheckpoint"], "web/x3-renderer.js": ["drawPhoneSync"]},
+      "test_tokens": ["Pocket Sync surface", "sealed pack"]
+    }
+  ]
+}

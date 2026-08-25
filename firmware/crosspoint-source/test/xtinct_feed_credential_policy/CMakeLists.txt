@@ -1,0 +1,3 @@
+add_executable(xtinct_feed_credential_policy_tests XtinctFeedCredentialPolicyTest.cpp)
+target_link_libraries(xtinct_feed_credential_policy_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(xtinct_feed_credential_policy_tests)

@@ -1,0 +1,36 @@
+# Build and release outputs
+delivery/
+dist/
+*.log
+*.tmp
+*.bak
+__pycache__/
+*.py[cod]
+
+# PlatformIO and native-test state
+firmware/crosspoint-source/.pio/
+firmware/crosspoint-source/.cache/
+firmware/crosspoint-source/.xtinct-*/
+firmware/crosspoint-source/build/
+
+# Local credentials and deployment state
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.keystore
+*.jks
+*.pem
+*.p12
+*.pfx
+google-service-account*.json
+wrangler.local.jsonc
+
+# Editor/OS files
+.idea/
+.vscode/
+.vs/
+.DS_Store
+Thumbs.db

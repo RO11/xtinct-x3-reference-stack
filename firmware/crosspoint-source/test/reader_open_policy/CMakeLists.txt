@@ -1,0 +1,3 @@
+add_executable(reader_open_policy_tests ReaderOpenPolicyTest.cpp)
+target_link_libraries(reader_open_policy_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(reader_open_policy_tests)

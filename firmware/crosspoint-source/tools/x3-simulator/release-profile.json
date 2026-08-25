@@ -1,0 +1,27 @@
+{
+  "schema": "x3-preview-release-profile/1",
+  "product": "X3 Preview & QA Lab for Windows",
+  "version": "0.1.0-alpha.4",
+  "target": {
+    "model": "Xteink X3",
+    "mcu": "ESP32-C3"
+  },
+  "firmware": {
+    "bundled": true,
+    "runtime_policy": "bundled-official-baseline-read-only",
+    "preview_mode": "synthetic-modeled-demo",
+    "device_access": "none",
+    "baseline": {
+      "project": "CrossPoint Reader",
+      "version": "v1.5.0",
+      "channel": "stable",
+      "asset": "firmware-baseline/crosspoint-v1.5.0/firmware.bin",
+      "byte_count": 5544112,
+      "sha256": "a7087155757bc63c1fcf60ae8d60a3760ce6d3406aaf7b9f23d0025244434f08",
+      "release_url": "https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/v1.5.0",
+      "download_url": "https://github.com/crosspoint-reader/crosspoint-reader/releases/download/v1.5.0/firmware.bin",
+      "license": "MIT",
+      "execution": "inspected-not-executed"
+    }
+  }
+}

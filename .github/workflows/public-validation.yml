@@ -1,0 +1,47 @@
+name: Public validation
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  source-and-simulator:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Root release-engineering tests
+        run: python -B -m unittest discover -s tests -p "test*.py" -q
+      - name: Deterministic-cache self-test
+        run: python -B firmware/crosspoint-source/scripts/xtinct_ready27_cache.py --self-test
+      - name: Source contracts
+        working-directory: firmware/crosspoint-source
+        run: |
+          python -B scripts/check_x3_resource_budgets.py
+          python -B test/xtinct_feed_credential_policy/verify_source_contract.py
+      - name: Simulator unit and contract tests
+        working-directory: firmware/crosspoint-source/tools/x3-simulator
+        run: python -B -m unittest test_run_full_qa.py test_qemu_firmware.py test_network_fixture.py test_server.py -q
+      - name: Portable-preview release tests
+        working-directory: firmware/crosspoint-source/tools/x3-simulator/scripts
+        run: python -B -m unittest test_release_engineering.py -q
+
+  worker-template:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/xtinct-feed-worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: services/xtinct-feed-worker/package-lock.json
+      - run: npm ci
+      - run: npm test

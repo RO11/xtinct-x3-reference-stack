@@ -1,0 +1,48 @@
+{
+  "schema": "xtinct-pocket-sync-wire-vectors/1",
+  "byteOrder": "little-endian",
+  "capabilities": {
+    "sessionNonceHex": "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+    "frameHex": "584301011f0044000001000000400100000004dcea043f00f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000000"
+  },
+  "authenticatedControlStart": {
+    "appKeyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "sessionNonceHex": "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+    "opcode": 3,
+    "messageId": 42,
+    "sequence": 1,
+    "payloadHex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa41010000bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbd2040000020a",
+    "hmacInputHex": "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff032a01000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa41010000bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbd2040000020a",
+    "hmacSha256Truncated16Hex": "382f4559027f422813a8d03ec29372da",
+    "authenticatedBodyHex": "01000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa41010000bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbd2040000020a382f4559027f422813a8d03ec29372da",
+    "attPayloadBytes": 20,
+    "fragmentsHex": [
+      "c101032a00080d01000000aaaaaaaaaaaaaaaaaa",
+      "c101032a01080daaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "c101032a02080daaaaaaaaaaaaaaaaaaaa410100",
+      "c101032a03080d00bbbbbbbbbbbbbbbbbbbbbbbb",
+      "c101032a04080dbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "c101032a05080dbbbbbbbbbbbbbbd2040000020a",
+      "c101032a06080d382f4559027f422813a8d03ec2",
+      "c101032a0708039372da"
+    ]
+  },
+  "data": {
+    "stream": 255,
+    "offset": 42,
+    "payloadAscii": "0123456789",
+    "crc16CcittFalseHex": "7d61",
+    "frameHex": "d101ff2a0000000a617d30313233343536373839"
+  },
+  "status": {
+    "phase": 3,
+    "result": 0,
+    "stream": 255,
+    "chunkBytes": 10,
+    "windowChunks": 4,
+    "durableOffset": 42,
+    "sequence": 7,
+    "packPrefixHex": "aabbccdd",
+    "frameHex": "5853010300ff0a042a00000007000000aabbccdd"
+  }
+}

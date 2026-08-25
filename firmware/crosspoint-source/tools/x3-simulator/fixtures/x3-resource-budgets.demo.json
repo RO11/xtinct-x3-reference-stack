@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "device": {
+    "model": "Xteink X3",
+    "mcu": "ESP32-C3",
+    "cpu_cores": 1,
+    "cpu_hz": 160000000,
+    "internal_sram_bytes": 409600,
+    "linker_dram_bytes": 321296,
+    "psram_bytes": 0,
+    "flash_bytes": 16777216,
+    "ota_slot_bytes": 6553600,
+    "display_width_pixels": 792,
+    "display_height_pixels": 528,
+    "display_levels": 4,
+    "one_bit_framebuffer_bytes": 52272,
+    "battery_capacity_mah": 650
+  },
+  "linked_image": {
+    "firmware_bin_max_bytes": 6553600,
+    "firmware_bin_min_headroom_bytes": 49152,
+    "firmware_bin_warn_below_headroom_bytes": 131072,
+    "data_plus_bss_max_bytes": 65536,
+    "iram_text_max_bytes": 98304,
+    "total_dram_image_max_bytes": 155648,
+    "rtc_slow_used_max_bytes": 6144,
+    "exception_unwind_max_bytes": 557056
+  },
+  "task_stacks": {
+    "arduino_loop_bytes": 16384,
+    "activity_render_bytes": 8192,
+    "nimble_host_bytes": 4096,
+    "esp_timer_bytes": 4096,
+    "freertos_timer_bytes": 2560,
+    "tcpip_bytes": 4096
+  },
+  "runtime_operations": {
+    "reader_render": {
+      "min_free_heap_bytes": 24576,
+      "min_largest_block_bytes": 16384,
+      "kind": "hard admission"
+    },
+    "reader_background_index": {
+      "min_free_heap_bytes": 32768,
+      "min_largest_block_bytes": 16384,
+      "kind": "hard admission"
+    },
+    "epub_checked_growth_reserve": {
+      "min_free_heap_reserve_bytes": 49152,
+      "min_largest_block_reserve_bytes": 4096,
+      "kind": "per-allocation reserve"
+    },
+    "css_parse": {
+      "min_free_heap_bytes": 49152,
+      "kind": "hard admission"
+    },
+    "jpeg_framebuffer_decode": {
+      "min_free_heap_bytes": 36864,
+      "decoder_bytes": 20480,
+      "kind": "hard admission"
+    },
+    "jpeg_to_bmp_decode": {
+      "min_free_heap_bytes": 53248,
+      "decoder_bytes": 20480,
+      "kind": "hard admission"
+    },
+    "png_framebuffer_decode": {
+      "min_free_heap_bytes": 63520,
+      "min_largest_block_bytes": 47136,
+      "decoder_bytes": 47136,
+      "max_buffered_pixels": 4096,
+      "kind": "hard admission"
+    },
+    "font_mini_retain": {
+      "min_free_heap_bytes": 40960,
+      "kind": "hard admission"
+    },
+    "tls_13_sync": {
+      "observed_min_free_heap_bytes": 44032,
+      "observed_start_largest_block_bytes": 74752,
+      "kind": "measured watermark; physical regression required"
+    },
+    "inbox_direct_sync": {
+      "response_buffer_max_bytes": 28672,
+      "parsed_page_bytes": 7480,
+      "ack_payload_max_bytes": 4096,
+      "fixed_response_plus_page_bytes": 36152,
+      "kind": "compile-time and source gate"
+    },
+    "display": {
+      "framebuffer_bytes_per_plane": 52272,
+      "simultaneous_framebuffer_planes": 1,
+      "chunk_bytes": 8000,
+      "kind": "compile-time configuration"
+    },
+    "webdav": {
+      "upload_buffer_bytes": 4096,
+      "download_buffer_bytes": 1024,
+      "watchdog_service_each_chunk": true,
+      "kind": "source gate"
+    }
+  },
+  "data_limits": {
+    "sleep_screen": {
+      "portrait_width_pixels": 528,
+      "portrait_height_pixels": 792,
+      "bits_per_pixel": 4,
+      "bmp_pixel_offset_bytes": 70,
+      "bmp_row_bytes": 264,
+      "bmp_file_bytes": 209158,
+      "palette_luminance": [0, 85, 170, 255],
+      "minimum_gray_levels_used": 3,
+      "edge_gutter_scan_pixels": 8,
+      "edge_gutter_min_white_per_mille": 995,
+      "perceptual_master_required": true,
+      "low_frequency_block_pixels": 8,
+      "low_frequency_rmse_max": 12.0,
+      "edge_detail_block_pixels": 4,
+      "edge_gradient_correlation_min": 0.9,
+      "edge_energy_ratio_min": 0.65,
+      "edge_energy_ratio_max": 2.0,
+      "periodic_residual_block_pixels": 8,
+      "periodic_lag_min_pixels": 2,
+      "periodic_lag_max_pixels": 8,
+      "periodic_autocorrelation_max": 0.45
+    },
+    "inbox": {
+      "items_on_device": 64,
+      "item_struct_bytes": 796,
+      "changes_per_direct_page": 8,
+      "pages_per_wake": 10,
+      "metadata_json_bytes": 2048,
+      "outbox_file_bytes": 32768,
+      "outbox_event_line_bytes": 1536
+    },
+    "pocket_sync": {
+      "manifest_bytes": 65536,
+      "object_bytes": 20971520,
+      "pack_bytes": 67108864,
+      "objects": 68,
+      "chunk_bytes": 234,
+      "window_chunks": 4
+    },
+    "epub": {
+      "resource_bytes": 20971520,
+      "in_memory_resource_bytes": 262144,
+      "retained_css_bytes": 81920,
+      "retained_paragraph_bytes": 98304,
+      "retained_page_bytes": 114688,
+      "serialized_page_bytes": 163840,
+      "layout_scratch_bytes": 98304,
+      "metadata_batch_bytes": 98304
+    },
+    "file_transfer": {
+      "path_bytes": 512,
+      "component_bytes": 255,
+      "single_file_bytes": 4294967295
+    }
+  },
+  "capabilities": {
+    "touch": false,
+    "frontlight": false,
+    "speaker": false,
+    "microphone": false,
+    "haptics": false,
+    "gps": false,
+    "cellular": false,
+    "wifi_5ghz": false,
+    "psram": false,
+    "current_firmware_nfc_driver": false,
+    "wifi_2_4ghz": true,
+    "ble_peripheral": true,
+    "micro_sd": true,
+    "rtc": true,
+    "imu": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "XTINCTOfflineProgressMapper",
+  "version": "1.0.0",
+  "description": "Offline EPUB position mapping retained without KOReader network sync",
+  "build": {
+    "srcDir": ".",
+    "includeDir": ".",
+    "srcFilter": [
+      "+<ChapterXPathResolver.cpp>",
+      "+<ProgressMapper.cpp>"
+    ]
+  }
+}

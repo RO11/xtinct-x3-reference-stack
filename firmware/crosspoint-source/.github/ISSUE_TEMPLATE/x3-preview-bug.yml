@@ -1,0 +1,41 @@
+name: X3 Preview QA Lab bug
+description: Report a reproducible problem using synthetic data only.
+title: "[X3 Preview] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach firmware, private content, credentials, host paths or device dumps.
+  - type: input
+    id: version
+    attributes:
+      label: Version and ZIP SHA-256
+      placeholder: 0.1.0-alpha.1 / 64 lowercase hex characters
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence
+    attributes:
+      label: Evidence level
+      options:
+        - MODELED
+        - REAL CONTRACT TEST
+        - QEMU
+        - PHYSICAL DEVICE REQUIRED
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Synthetic reproduction
+      description: List the scenario, controls and exact observed result.
+    validations:
+      required: true
+  - type: textarea
+    id: bundle
+    attributes:
+      label: Sanitized session JSON
+      description: Attach or paste only the allowlisted bug bundle exported by the lab.
+      render: json
+    validations:
+      required: true

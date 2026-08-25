@@ -1,0 +1,3 @@
+add_executable(bounded_response_buffer_tests BoundedResponseBufferTest.cpp)
+target_link_libraries(bounded_response_buffer_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(bounded_response_buffer_tests)

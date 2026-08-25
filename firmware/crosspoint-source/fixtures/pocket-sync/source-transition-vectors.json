@@ -1,0 +1,49 @@
+{
+  "schema": "xtinct-pocket-sync-source-transition-vectors/1",
+  "v1": [
+    {
+      "name": "removed-cached-task-with-no-returned-card-change",
+      "status": "complete",
+      "changedCards": 0,
+      "cachedMask": 3,
+      "returnedMask": 1,
+      "valid": true
+    }
+  ],
+  "v2": [
+    {
+      "name": "empty-snapshot-advances-over-historical-ledger",
+      "mode": "snapshot",
+      "status": "no_changes",
+      "changeCount": 0,
+      "containsTombstone": false,
+      "fromCursor": "0",
+      "toCursor": "15",
+      "localCursor": "0",
+      "valid": true,
+      "deviceEffect": "delete-local-metadata-not-in-empty-live-set-and-persist-cursor-15"
+    },
+    {
+      "name": "snapshot-tombstone-fails-closed",
+      "mode": "snapshot",
+      "status": "complete",
+      "changeCount": 1,
+      "containsTombstone": true,
+      "fromCursor": "0",
+      "toCursor": "15",
+      "localCursor": "0",
+      "valid": false
+    },
+    {
+      "name": "delta-no-changes-cannot-advance",
+      "mode": "delta",
+      "status": "no_changes",
+      "changeCount": 0,
+      "containsTombstone": false,
+      "fromCursor": "12",
+      "toCursor": "15",
+      "localCursor": "12",
+      "valid": false
+    }
+  ]
+}

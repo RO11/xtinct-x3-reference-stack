@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>XTINCT X3 Preview Lab</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Cpath d='M8 8h16v16H8z' fill='none' stroke='%23d4ff3f' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="lab-shell">
+      <section class="workbench" aria-label="X3 simulator">
+        <header class="lab-header">
+          <div>
+            <p class="eyebrow">XTINCT / DEVICE LAB</p>
+            <h1>X3 Preview Lab</h1>
+            <p class="lede">A local, demo-first preview and QA lab for Xteink X3 development.</p>
+          </div>
+          <div class="status-stack">
+            <span class="status-pill" id="connection-status">LOCAL / OFFLINE</span>
+            <span id="frame-status">FRAME 528 × 792</span>
+          </div>
+        </header>
+
+        <section id="firmware-context" class="firmware-context" aria-labelledby="firmware-context-title" aria-live="polite" aria-atomic="true" aria-busy="true">
+          <div class="firmware-context-intro">
+            <p class="eyebrow">FIRMWARE CONTEXT</p>
+            <h2 id="firmware-context-title">What firmware does this lab come with?</h2>
+            <p><strong>None.</strong> Preview, optional inspection, QEMU and a physical X3 are separate evidence layers.</p>
+          </div>
+          <dl class="firmware-context-grid">
+            <div>
+              <dt>Package</dt>
+              <dd id="firmware-context-package">CROSSPOINT v1.5.0 STABLE INCLUDED · READ-ONLY</dd>
+            </div>
+            <div>
+              <dt>Preview</dt>
+              <dd id="firmware-context-preview">SYNTHETIC PREVIEW · NOT FIRMWARE EXECUTION</dd>
+            </div>
+            <div>
+              <dt>Selected inspection image</dt>
+              <dd id="firmware-context-local">BUNDLED BASELINE SELECTED</dd>
+            </div>
+            <div>
+              <dt>QEMU</dt>
+              <dd id="firmware-context-qemu">NOT BUNDLED · NOT STARTED</dd>
+            </div>
+            <div>
+              <dt>Physical X3</dt>
+              <dd id="firmware-context-physical">NOT READ BY THIS APP · INSTALLED VERSION UNKNOWN</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="evidence-strip" aria-label="Evidence boundaries">
+          <article class="evidence-card evidence-modeled">
+            <strong>MODELED</strong>
+            <span>Display, buttons, state and cloned files</span>
+          </article>
+          <article class="evidence-card evidence-contract">
+            <strong>REAL CONTRACT TEST</strong>
+            <span>Isolated HTTP bytes, schemas and transaction seams</span>
+          </article>
+          <article class="evidence-card evidence-qemu">
+            <strong>QEMU</strong>
+            <span>Optional offline firmware execution when a full flash set exists</span>
+          </article>
+          <article class="evidence-card evidence-physical">
+            <strong>PHYSICAL DEVICE REQUIRED</strong>
+            <span>E-Ink, buttons, SD power loss, radio, RTC and battery</span>
+          </article>
+        </section>
+
+        <details class="onboarding" open>
+          <summary>Start here · synthetic demo content is already loaded</summary>
+          <div class="onboarding-grid">
+            <p><b>1 · Preview.</b> Use the device buttons or keyboard. Nothing is written to a real X3 or your source SD card.</p>
+            <p><b>2 · Stress.</b> Open <em>Network</em> to run same-origin contracts, latency and one-shot interrupted transfers.</p>
+            <p><b>3 · Reproduce.</b> Record inputs in <em>Session</em>, compare screenshots in <em>Visual</em>, then export a sanitized bug bundle.</p>
+          </div>
+        </details>
+
+        <div class="device-stage">
+          <div class="x3-device" aria-label="Xteink X3 device frame">
+            <button class="side-key side-key-power" data-button="power" aria-label="Modeled long power hold">P</button>
+            <button class="side-key side-key-up" data-button="up" aria-label="Side up button">▲</button>
+            <button class="side-key side-key-down" data-button="down" aria-label="Side down button">▼</button>
+            <div class="screen-bezel">
+              <canvas id="x3-screen" width="528" height="792" tabindex="0"
+                aria-label="Modeled X3 528 by 792 display" aria-describedby="x3-keyboard-help">Modeled X3 preview. Use the keyboard controls described below.</canvas>
+              <div id="refresh-flash" aria-hidden="true"></div>
+            </div>
+            <div class="front-keys" aria-label="X3 front buttons">
+              <button data-button="back" aria-label="Back">◁</button>
+              <button data-button="confirm" aria-label="Confirm">●</button>
+              <button data-button="left" aria-label="Left">◀</button>
+              <button data-button="right" aria-label="Right">▶</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="key-legend" id="x3-keyboard-help" aria-label="Keyboard controls">
+          <span><kbd>Esc</kbd> Back</span>
+          <span><kbd>Enter</kbd> Confirm</span>
+          <span><kbd>←</kbd><kbd>→</kbd> Left / Right</span>
+          <span><kbd>↑</kbd><kbd>↓</kbd> Up / Down</span>
+          <span><kbd>P</kbd> Power hold</span>
+        </section>
+      </section>
+
+      <aside class="inspector">
+        <nav class="inspector-tabs" role="tablist" aria-label="Inspector panels">
+          <button id="tab-firmware" class="active" data-tab="firmware" role="tab" aria-controls="panel-firmware" aria-selected="true" tabindex="0">Firmware</button>
+          <button id="tab-contract" data-tab="contract" role="tab" aria-controls="panel-contract" aria-selected="false" tabindex="-1">Contract</button>
+          <button id="tab-session" data-tab="session" role="tab" aria-controls="panel-session" aria-selected="false" tabindex="-1">Session</button>
+          <button id="tab-network" data-tab="network" role="tab" aria-controls="panel-network" aria-selected="false" tabindex="-1">Network</button>
+          <button id="tab-visual" data-tab="visual" role="tab" aria-controls="panel-visual" aria-selected="false" tabindex="-1">Visual</button>
+          <button id="tab-qemu" data-tab="qemu" role="tab" aria-controls="panel-qemu" aria-selected="false" tabindex="-1">QEMU</button>
+        </nav>
+        <section id="panel-firmware" class="inspector-panel active" role="tabpanel" aria-labelledby="tab-firmware" tabindex="0"></section>
+        <section id="panel-contract" class="inspector-panel" role="tabpanel" aria-labelledby="tab-contract" tabindex="0" hidden></section>
+        <section id="panel-session" class="inspector-panel" role="tabpanel" aria-labelledby="tab-session" tabindex="0" hidden>
+          <h2><span class="mini-evidence modeled">MODELED</span> Input session</h2>
+          <dl id="session-status"></dl>
+          <div class="tool-block">
+            <div class="tool-heading">
+              <h3>Action recording</h3>
+              <span id="recording-state" class="recording-state" aria-live="polite">RECORDING</span>
+            </div>
+            <p>Records only button, modeled route and relative timing—never document content.</p>
+            <div class="tool-actions two-column">
+              <button id="toggle-recording" type="button" aria-pressed="true">Pause</button>
+              <button id="clear-recording" type="button">Clear</button>
+              <button id="export-recording" type="button">Export JSON</button>
+              <label class="file-button">Replay JSON
+                <input id="replay-recording" class="visually-hidden" type="file" accept="application/json,.json">
+              </label>
+            </div>
+            <p id="recording-message" class="tool-message" aria-live="polite"></p>
+          </div>
+        </section>
+        <section id="panel-network" class="inspector-panel" role="tabpanel" aria-labelledby="tab-network" tabindex="0" hidden></section>
+        <section id="panel-visual" class="inspector-panel" role="tabpanel" aria-labelledby="tab-visual" tabindex="0" hidden>
+          <h2><span class="mini-evidence modeled">MODELED</span> Visual diff</h2>
+          <p class="network-note">Choose two screenshots with identical dimensions. Decoding and comparison stay inside this browser tab; pixels and filenames are never exported.</p>
+          <div class="image-pickers">
+            <label for="visual-baseline">Baseline image</label>
+            <input id="visual-baseline" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" aria-describedby="visual-privacy-note visual-baseline-state">
+            <span id="visual-baseline-state">No image selected</span>
+            <label for="visual-candidate">Candidate image</label>
+            <input id="visual-candidate" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" aria-describedby="visual-privacy-note visual-candidate-state">
+            <span id="visual-candidate-state">No image selected</span>
+          </div>
+          <button id="compare-images" class="wide-action" type="button" disabled>Compare locally</button>
+          <p id="visual-privacy-note" class="tool-message">Files remain local to this browser tab.</p>
+          <p id="visual-result" class="tool-message" aria-live="polite">Select a baseline and candidate.</p>
+          <canvas id="visual-diff" width="264" height="396" role="img" aria-label="Pixel difference preview" hidden>Pixel difference preview.</canvas>
+        </section>
+        <section id="panel-qemu" class="inspector-panel" role="tabpanel" aria-labelledby="tab-qemu" tabindex="0" hidden></section>
+        <div class="inspector-actions">
+          <button id="reset-session">Reset cloned SD</button>
+          <button id="export-frame">Export frame PNG</button>
+          <button id="export-bug-bundle">Export sanitized bug bundle</button>
+        </div>
+        <p class="truth-note"><strong>PHYSICAL DEVICE REQUIRED</strong> remains the release boundary for E-Ink waveform, heap fragmentation, ADC buttons, radio, watchdog, RTC wake, battery and SD power-loss behavior.</p>
+      </aside>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+add_executable(PersistableStorePolicyTest PersistableStorePolicyTest.cpp)
+target_link_libraries(PersistableStorePolicyTest PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(PersistableStorePolicyTest)

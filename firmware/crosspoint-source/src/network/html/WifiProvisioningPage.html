@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>XTINCT X3 setup</title>
+  <style>
+    :root{font-family:system-ui,sans-serif;color:#171717;background:#f2efe8}body{margin:0}main{max-width:620px;margin:auto;padding:20px}.card{background:#fff;border:2px solid #171717;border-radius:14px;padding:18px;margin:0 0 16px;box-shadow:4px 4px 0 #171717}h1{margin:0 0 6px;font-size:1.8rem}h2{margin:0 0 12px;font-size:1.2rem}p{line-height:1.45}.muted{color:#5d5d5d}.status{min-height:1.4em;font-weight:650}.ok{color:#126b34}.bad{color:#a21a1a}label{display:block;font-weight:650;margin:12px 0 5px}input,select,button{box-sizing:border-box;width:100%;font:inherit;padding:12px;border:2px solid #171717;border-radius:9px;background:#fff}button{margin-top:12px;background:#171717;color:#fff;font-weight:750;cursor:pointer}button.secondary{background:#fff;color:#171717}button:disabled{opacity:.55}.row{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end}.row button{width:auto}.saved{margin:8px 0;padding:8px 10px;border-left:4px solid #171717;background:#f6f6f6}.toggle{display:flex;gap:9px;align-items:center}.toggle input{width:auto}.tiny{font-size:.85rem}</style>
+</head>
+<body>
+<main>
+  <div class="card"><h1>XTINCT X3</h1><p class="muted">Phone setup is active for ten minutes. Wi-Fi and feed secrets stay on this reader.</p><div id="global" class="status"></div></div>
+
+  <section class="card">
+    <h2>Add or update Wi-Fi</h2>
+    <div class="row"><div><label for="networks">Nearby networks</label><select id="networks"><option value="">Scan to choose</option></select></div><button id="scan" class="secondary" type="button">Scan</button></div>
+    <label for="ssid">Network name (SSID)</label><input id="ssid" maxlength="32" autocomplete="off" placeholder="Choose above or type a hidden network">
+    <label for="password">Wi-Fi password</label><input id="password" type="password" maxlength="64" autocomplete="current-password" placeholder="8-63 characters, 64-digit hex PSK, or empty for open Wi-Fi">
+    <button id="connect" type="button">Test, then save</button>
+    <div id="wifi-status" class="status"></div>
+    <div id="saved"></div>
+  </section>
+
+  <section class="card">
+    <h2>Daily Cards</h2>
+    <label for="base-url">Bound Worker address</label><input id="base-url" type="url" maxlength="192" autocomplete="off" readonly aria-readonly="true">
+    <p class="muted tiny">The Worker address and read token are installed together over physical USB. Phone setup cannot redirect the credential.</p>
+    <p id="token-state" class="muted tiny">Checking feed credential...</p>
+    <label class="toggle"><input id="enabled" type="checkbox">Wake and refresh automatically</label>
+    <label for="wake-time">Primary morning wake</label><select id="wake-time"></select>
+    <label for="utc-offset">Local UTC offset</label><select id="utc-offset"></select>
+    <p class="muted tiny">The reader uses the selected primary wake plus catch-up windows at 08:15 and 18:00 local time. It downloads changed cards and full reports, shows the best card, and returns to sleep. A failed sync never starts phone setup.</p>
+    <button id="save-feed" type="button">Save Daily Cards settings</button>
+    <div id="feed-status" class="status"></div>
+    <div id="wake-diagnostic" class="muted tiny"></div>
+  </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let setupToken='';
+const say=(id,text,ok)=>{const el=$(id);el.textContent=text;el.className='status '+(ok===true?'ok':ok===false?'bad':'')};
+async function json(url,options){options=options||{};options.headers=options.headers||{};if(setupToken)options.headers['X-XTINCT-Setup']=setupToken;const response=await fetch(url,options);const text=await response.text();let data={};try{data=text?JSON.parse(text):{}}catch(e){data={error:text||'Invalid response'}}if(!response.ok)throw new Error(data.error||('Request failed: '+response.status));return data}
+for(let minutes=0;minutes<24*60;minutes+=15){const option=document.createElement('option');option.value=minutes;option.textContent=String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');$('wake-time').appendChild(option)}
+for(let q=0;q<=104;q++){const minutes=(q-48)*15;const sign=minutes<0?'-':'+';const absolute=Math.abs(minutes);const option=document.createElement('option');option.value=q;option.textContent='UTC'+sign+String(Math.floor(absolute/60)).padStart(2,'0')+':'+String(absolute%60).padStart(2,'0')+(q===88?' · Brisbane (AEST)':'');$('utc-offset').appendChild(option)}
+async function loadConfig(){try{const cfg=await json('/api/config');$('base-url').value=cfg.base_url||'';$('enabled').checked=!!cfg.enabled;$('wake-time').value=String((cfg.wake_hour??4)*60+(cfg.wake_minute??15));$('utc-offset').value=String(cfg.utc_offset_quarter_hours??48);$('token-state').textContent=cfg.has_token?'A bound feed credential is installed in device flash.':'No feed credential is installed; provision the Worker origin and token over physical USB.';let diagnostic=cfg.schedule_ready?'Ready. Next sleep will arm '+(cfg.next_wake_local||'the next window')+'.':(cfg.schedule_reason_text||'Wake schedule is not ready.');if(cfg.timezone_brisbane_warning)diagnostic+=' Warning: Brisbane requires UTC+10:00.';diagnostic+=' Last timer: '+(cfg.last_timer_arm_state||'unknown')+'. Last wake: '+(cfg.last_wake_cause||'unknown')+'.';$('wake-diagnostic').textContent=diagnostic}catch(e){say('feed-status',e.message,false)}}
+async function loadSaved(){try{const list=await json('/api/saved');const root=$('saved');root.replaceChildren();const title=document.createElement('p');title.className='muted tiny';title.textContent='Saved networks';root.appendChild(title);for(const network of list){const row=document.createElement('div');row.className='saved';const label=document.createElement('span');label.textContent=network.ssid+(network.preferred?' · preferred':'');const remove=document.createElement('button');remove.type='button';remove.className='secondary';remove.textContent='Forget';remove.style.width='auto';remove.style.margin='8px 0 0';remove.onclick=async()=>{remove.disabled=true;say('wifi-status','Forgetting '+network.ssid+'…');try{await json('/api/saved/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssid:network.ssid})});say('wifi-status','Forgot '+network.ssid,true);await loadSaved()}catch(e){say('wifi-status',e.message,false);remove.disabled=false}};row.append(label,remove);root.appendChild(row)}}catch(e){$('saved').textContent='Could not read saved networks'}}
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('scan').onclick=async()=>{say('wifi-status','Scanning…');$('scan').disabled=true;try{const list=await json('/api/networks');$('networks').innerHTML='<option value="">Type a hidden network</option>'+list.map(n=>'<option value="'+escapeHtml(n.ssid)+'">'+escapeHtml(n.ssid)+' · '+n.rssi+' dBm'+(n.secure?' · locked':' · open')+(n.saved?' · saved':'')+'</option>').join('');say('wifi-status',list.length?list.length+' network(s) found':'No broadcast networks found',true)}catch(e){say('wifi-status',e.message,false)}finally{$('scan').disabled=false}};
+$('networks').onchange=()=>{if($('networks').value)$('ssid').value=$('networks').value};
+$('connect').onclick=async()=>{const ssid=$('ssid').value.trim();if(!ssid){say('wifi-status','Enter a network name',false);return}$('connect').disabled=true;say('wifi-status','Testing before saving…');try{const result=await json('/api/connect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssid,password:$('password').value})});$('password').value='';say('wifi-status','Connected to '+result.ssid+' · '+result.ip+(result.clock_synced?' · clock synced':' · clock not synced; an ON request will remain pending'),result.clock_synced);await loadSaved()}catch(e){say('wifi-status',e.message,false)}finally{$('connect').disabled=false}};
+$('save-feed').onclick=async()=>{const wakeMinutes=Number($('wake-time').value);const payload={enabled:$('enabled').checked,wake_hour:Math.floor(wakeMinutes/60),wake_minute:wakeMinutes%60,utc_offset_quarter_hours:Number($('utc-offset').value)};$('save-feed').disabled=true;say('feed-status','Saving…');try{const result=await json('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const message=result.enabled?(result.schedule_ready?'Saved and ready. Exit setup and sleep the X3 to arm '+(result.next_wake_local||'the next window')+'.':'Saved, but not ready: '+(result.schedule_reason_text||result.schedule_reason)):'Saved. Automatic wake is off.';say('feed-status',message,result.enabled?result.schedule_ready:true);await loadConfig()}catch(e){say('feed-status',e.message,false)}finally{$('save-feed').disabled=false}};
+async function start(){try{const session=await json('/api/session');setupToken=session.token||'';if(!setupToken)throw new Error('Setup session unavailable');await Promise.all([loadConfig(),loadSaved()]);$('scan').click()}catch(e){say('global',e.message,false)}}
+start();
+</script>
+</body>
+</html>

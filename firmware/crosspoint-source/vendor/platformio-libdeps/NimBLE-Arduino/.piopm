@@ -1,0 +1,1 @@
+{"type": "library", "name": "NimBLE-Arduino", "version": "2.5.0+sha.f66f4fe2", "spec": {"owner": null, "id": null, "name": "NimBLE-Arduino", "requirements": null, "uri": "git+https://github.com/h2zero/NimBLE-Arduino.git#f66f4fe26306747cd8308e77d755da1863219089"}}

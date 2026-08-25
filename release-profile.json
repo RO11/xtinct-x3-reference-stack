@@ -1,0 +1,35 @@
+{
+  "schema": "xtinct-x3-reference-release/1",
+  "repository_version": "0.1.0-alpha.1",
+  "firmware_version": "1.6.2-xtinct.1",
+  "build_id": "BUILD-162-XTINCT1-PUBLIC",
+  "release_label": "v1.6.2-xtinct.1",
+  "target": {
+    "model": "Xteink X3",
+    "mcu": "ESP32-C3",
+    "panel": [528, 792],
+    "grays": [0, 85, 170, 255]
+  },
+  "upstream": {
+    "project": "CrossPoint Reader",
+    "commit": "4e619035"
+  },
+  "status": "qa-passed-physical-pending",
+  "firmware": {
+    "bytes": 6481008,
+    "sha256": "b689b26b47f08e7df955c8a5bbd6453d1f11562b99a161c45af7f913b99c71f4"
+  },
+  "evidence": {
+    "source_sha256": "c001a496408cdb05fe7e45621dcdc07be602d655ad992f055dbfb8499fd041b7",
+    "prebuild": {
+      "bytes": 82009,
+      "sha256": "6a097c64b4f02af2dc0857efe1e3a868edf5394dda9ffd062c3d6394cc342dca"
+    },
+    "postbuild": {
+      "bytes": 95100,
+      "sha256": "a8a0a51dd5109e2def278ce3a3e8458ef40c75301b0351d7349280f1ed33b036"
+    },
+    "qemu": "passed",
+    "physical_x3": "required"
+  }
+}

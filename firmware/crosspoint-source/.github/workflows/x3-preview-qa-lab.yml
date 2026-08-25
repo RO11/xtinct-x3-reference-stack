@@ -1,0 +1,91 @@
+name: X3 Preview QA Lab
+
+on:
+  push:
+    paths:
+      - "tools/x3-simulator/**"
+      - "config/x3-resource-budgets.json"
+      - "src/network/**"
+      - "src/util/**"
+      - ".github/workflows/x3-preview-qa-lab.yml"
+  pull_request:
+    paths:
+      - "tools/x3-simulator/**"
+      - "config/x3-resource-budgets.json"
+      - "src/network/**"
+      - "src/util/**"
+      - ".github/workflows/x3-preview-qa-lab.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            label: Windows
+          - os: ubuntu-latest
+            label: Ubuntu-WSL-compatible
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: tools/x3-simulator
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: tools/x3-simulator/package.json
+
+      - name: Select Windows C++ compiler
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $candidates = @(
+            (Get-Command clang++.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1),
+            'C:\Program Files\LLVM\bin\clang++.exe',
+            (Get-Command g++.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1)
+          ) | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Leaf) }
+          if ($candidates.Count -lt 1) { throw 'No C++ compiler is available for the real-contract gate.' }
+          "CXX=$($candidates[0])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Run contract, JavaScript, Python and release suites
+        run: npm test
+
+      - name: Run explicit public-source sanitization
+        run: npm run sanitize
+
+      - name: Build deterministic Windows alpha candidate
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:RUNNER_TEMP 'x3-preview-release'
+          python -B scripts/build_portable.py --output-dir $output
+          $archive = Get-ChildItem -LiteralPath $output -File |
+            Where-Object Name -Like '*.zip' |
+            Select-Object -ExpandProperty FullName -Single
+          python -B scripts/sanitize_release.py --source . --archive $archive
+
+      - name: Upload Windows candidate and checksum
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v6
+        with:
+          name: x3-preview-qa-lab-windows-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/x3-preview-release/*.zip
+            ${{ runner.temp }}/x3-preview-release/*.sha256
+          if-no-files-found: error
+          retention-days: 14

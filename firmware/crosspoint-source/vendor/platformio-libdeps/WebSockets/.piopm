@@ -1,0 +1,1 @@
+{"type": "library", "name": "WebSockets", "version": "2.7.3+sha.1c8b8de", "spec": {"owner": null, "id": null, "name": "arduinoWebSockets", "requirements": null, "uri": "git+https://github.com/Links2004/arduinoWebSockets.git#1c8b8deaca30b36494a4f6ea4df23ae862b21662"}}

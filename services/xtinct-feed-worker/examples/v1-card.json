@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-01-15T07:00:00+10:00",
+  "title": "Reference project watchlist",
+  "summary": "A bounded example card generated from fictional project data.",
+  "priority": 1,
+  "state": "ok",
+  "metrics": [
+    {
+      "label": "Projects",
+      "value": "3 checked",
+      "tone": "neutral"
+    }
+  ],
+  "sections": [
+    {
+      "heading": "One thing to build",
+      "lines": [
+        "Add a small offline status panel.",
+        "Effort: one afternoon. First action: sketch the empty state."
+      ]
+    }
+  ],
+  "report_text": "REFERENCE REPORT\n\nThis is fictional public sample content. Replace it with your own producer output."
+}
+

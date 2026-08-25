@@ -1,0 +1,3 @@
+add_executable(inbox_newest_selection_tests InboxNewestSelectionTest.cpp)
+target_link_libraries(inbox_newest_selection_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(inbox_newest_selection_tests)

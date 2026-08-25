@@ -1,0 +1,104 @@
+# XTINCT X3 Reference Stack
+
+An open, reproducible reference implementation for turning an Xteink X3 into a once-a-day personal briefing reader. It extends the MIT-licensed CrossPoint Reader firmware with native Daily Cards V1, Inbox V2, a Today EPUB path, feedback receipts, cache-first recovery, scheduled wake handling, and a four-gray X3 sleep screen.
+
+This repository is the companion to the [X3 Preview & QA Lab](https://github.com/RO11/x3-preview-qa-lab). The Preview Lab models and tests the experience on Windows. This repository contains the device-side source and, once every release gate passes, the exact installable X3 image built from that source.
+
+> **Alpha software.** A passing simulator or QEMU run does not prove physical E-Ink waveforms, buttons, SD-card power-loss behavior, Wi-Fi/Bluetooth radio behavior, fragmented heap, watchdog timing, RTC wake, battery use, or recovery. Check the evidence table for the exact release before installing anything.
+
+## What is included
+
+- Complete XTINCT CrossPoint firmware source, based on upstream CrossPoint commit `4e619035`.
+- The matching FreeInk source snapshot and XTINCT TLS patch.
+- A sanitized D1/R2 Cloudflare Worker reference implementing the exact Cards
+  V1, Inbox V2, artifact, tombstone, receipt and like/dislike contracts.
+- A hash-pinned official CrossPoint v1.5.0 baseline used only by the preview
+  emulator, clearly separated from the custom installable image.
+- A checksum-bound installable `update.bin` on every firmware-bearing release.
+- Matching dependency source, QEMU boot-set and QA-evidence archives.
+- Daily Cards V1: four small, glanceable cards with revision-aware downloads, checksums, cache-first rendering, refresh progress and failure recovery.
+- Inbox V2: cursor paging, immutable SHA-addressed artifacts, EPUB/text/BMP support, open/delete actions, like/dislike feedback, receipts and retryable outbox delivery.
+- Today EPUB: a compact once-daily reading edition designed for offline use.
+- Sleep-screen delivery: exact 528×792, uncompressed 4-bpp BMP using the X3 panel's native 0/85/170/255 palette.
+- File Transfer hardening validates each actual long filename from the SD card;
+  it never guesses a FAT short-name alias when deciding whether an upload may
+  replace firmware or another protected file.
+- Daily wake scheduling with explicit readiness diagnostics and catch-up windows.
+- Local simulator contracts and offline ESP32-C3 QEMU boot validation.
+- Synthetic fixtures and protocol documentation. No private email, content, Worker address, token, account ID, sheet ID, device serial, IP address or personal project data is included.
+
+## What the Inbox actually looks like
+
+These are native 528×792 X3 render captures, not enlarged phone mockups.
+
+| Inbox V2 feed | Opened text artifact |
+| --- | --- |
+| ![Inbox V2 feed](docs/images/inbox-v2-default-preview-528x792.png) | ![Opened text artifact](docs/images/inbox-v2-open-article-528x792.png) |
+
+The X3 panel is low resolution by modern phone standards. The firmware uses the device's actual resolution and four grayscale levels; the screenshots should be viewed at 1:1 pixels for the honest result.
+
+## How content reaches the X3
+
+```text
+AI or deterministic producer
+        |
+        | exact JSON/email/task contract
+        v
+your private relay / Worker
+        |
+        | Cards V1 + Inbox V2 over verified HTTPS
+        v
+X3 local cache -> native card, inbox, text, EPUB and sleep-screen views
+        |
+        +-> open/delete/like/dislike receipts -> retryable outbox -> relay
+```
+
+The firmware does not contain an AI model. AI is the easiest way to generate useful daily material, but any script or service that follows the published contracts can be a producer. ChatGPT, Gemini/Spark and Grok are examples, not dependencies. Adult or sensitive material is neither bundled nor enabled by this repository; the operator controls their own private producer and relay.
+
+## Safe first install
+
+1. Read [docs/INSTALL_X3.md](docs/INSTALL_X3.md) and [docs/RECOVERY.md](docs/RECOVERY.md).
+2. Download the release's `update.bin` and `SHA256SUMS.txt`; do not rename an arbitrary build.
+3. Verify the SHA-256 locally.
+4. Keep the X3 powered and open **File Transfer**.
+5. Upload the verified bytes to the File Transfer root as the single canonical `/update.bin`.
+6. Use the X3's physical firmware-update screen to install it.
+7. Provision your own Worker origin and reader token together over physical USB. The public image phones home nowhere by default.
+
+The public firmware accepts only canonical `https://<worker>.<account>.workers.dev` origins. The origin and bearer are stored as one versioned NVS record. SD or phone setup cannot redirect an installed token, and authenticated requests explicitly refuse redirects.
+
+## Build and verification
+
+See [docs/BUILD_FIRMWARE.md](docs/BUILD_FIRMWARE.md) and
+[docs/RELEASE_ASSETS.md](docs/RELEASE_ASSETS.md). Every binary release must bind together:
+
+- the complete source snapshot SHA-256;
+- source resource-budget result;
+- mandatory prebuild report;
+- exact `firmware.bin`, MAP and effective sdkconfig resource gate;
+- matching bootloader, partition table and `boot_app0.bin`;
+- mandatory postbuild QEMU report;
+- source/archive/binary privacy scans;
+- byte counts and SHA-256 values for every release asset.
+
+The release notes state physical evidence separately. “Compiled,” “simulator passed,” “QEMU booted,” and “tested on an X3” are not interchangeable claims.
+
+## Firmware identity
+
+The first public candidate is `v1.6.2-xtinct.1` / `BUILD-162-XTINCT1-PUBLIC`. It starts unconfigured and disabled. The repository tag and firmware version are separate: the repository can publish documentation or packaging fixes without pretending the device image changed.
+
+## Licensing
+
+The combined firmware is distributed under GPL-3.0-or-later because it statically incorporates wolfSSL under GPL-2.0-or-later. CrossPoint, FreeInk and other dependencies retain their original MIT, Apache-2.0, BSD, LGPL or GPL notices. See [LICENSING.md](LICENSING.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). If you have commercial wolfSSL terms, consult qualified counsel about alternative distribution terms.
+
+## Limits
+
+- X3 only: 528×792 ESP32-C3 hardware. A 480×800 X4 asset is not an X3 asset.
+- The current image is close to its OTA ceiling; the exact release report records remaining headroom.
+- The narrow trust bundle supports the documented Cloudflare Workers origin path, not arbitrary HTTPS servers.
+- No cloud account, Google Sheet, mailbox, AI subscription or producer automation is created by flashing firmware.
+- The included content-service reference is account-neutral and undeployed;
+  email ingestion, AI producer adapters, account auth, monitoring and private
+  production infrastructure remain deliberately outside this repository.
+
+Security reports should follow [SECURITY.md](SECURITY.md). Contributions should preserve all resource, privacy, recovery and source-bound QA gates.

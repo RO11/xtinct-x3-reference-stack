@@ -1,0 +1,3 @@
+add_executable(FileTransferSafetyTest FileTransferSafetyTest.cpp)
+target_link_libraries(FileTransferSafetyTest PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(FileTransferSafetyTest)

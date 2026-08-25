@@ -1,0 +1,3 @@
+add_executable(xtinct_atomic_file_tests XtinctAtomicFileTest.cpp)
+target_link_libraries(xtinct_atomic_file_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(xtinct_atomic_file_tests)

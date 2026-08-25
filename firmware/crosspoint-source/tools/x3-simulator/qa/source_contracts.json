@@ -1,0 +1,285 @@
+{
+  "schema": 1,
+  "contracts": [
+    {
+      "id": "home-navigation",
+      "files": {
+        "src/activities/home/HomeActivity.cpp": [
+          "Files, Recents, transfer, Inbox, Cards, Phone Sync, Phone Wi-Fi, Settings",
+          "onXtinctInboxOpen()",
+          "onDailyCardsOpen()"
+        ],
+        "src/activities/home/HomeActivity.h": [
+          "HomeMenuItem::FILE_BROWSER",
+          "HomeMenuItem::RECENTS",
+          "HomeMenuItem::FILE_TRANSFER",
+          "HomeMenuItem::XTINCT_INBOX",
+          "HomeMenuItem::DAILY_CARDS",
+          "HomeMenuItem::PHONE_SYNC",
+          "HomeMenuItem::WIFI_PROVISIONING",
+          "HomeMenuItem::SETTINGS_MENU"
+        ]
+      }
+    },
+    {
+      "id": "files-open-delete",
+      "files": {
+        "src/activities/home/FileBrowserActivity.cpp": [
+          "FsHelpers::hasEpubExtension",
+          "FsHelpers::hasXtcExtension",
+          "FsHelpers::hasTxtExtension",
+          "FsHelpers::hasMarkdownExtension",
+          "FsHelpers::hasBmpExtension",
+          "GO_HOME_MS = 1000",
+          "removeDirFile(fullPath)",
+          "clearBookCache(fullPath)"
+        ]
+      }
+    },
+    {
+      "id": "recents-open-remove",
+      "files": {
+        "src/activities/home/RecentBooksActivity.cpp": [
+          "RECENT_BOOKS.pruneMissing",
+          "onSelectBook(recentBooks[selectorIndex].path)",
+          "RECENT_BOOKS.removeByPath(path)",
+          "LONG_PRESS_MS = 1000"
+        ]
+      }
+    },
+    {
+      "id": "txt-reader",
+      "files": {
+        "src/activities/reader/TxtReaderActivity.cpp": [
+          "CHUNK_SIZE = 8 * 1024",
+          "pageOffsets.push_back(0)",
+          "XtinctSyncClient::queueReaderProgress",
+          "txt_chunk_boundary::containsEmbeddedNul",
+          "ProgressFile::writeAtomic"
+        ],
+        "src/util/TxtChunkBoundary.h": [
+          "shouldAppendCrLfLookahead",
+          "containsEmbeddedNul",
+          "firstLine"
+        ],
+        "src/activities/reader/ProgressFile.h": [
+          "progress.bin.tmp",
+          "Storage.rename(tmpPath.c_str(), finalPath.c_str())"
+        ]
+      }
+    },
+    {
+      "id": "epub-reader",
+      "files": {
+        "src/activities/reader/EpubReaderActivity.cpp": [
+          "savedSpineNeedsReset",
+          "normalizeSavedSpine",
+          "currentSpineIndex == epub->getSpineItemsCount()",
+          "endOfBookOptions.loadOnce"
+        ],
+        "src/util/ReaderOpenPolicy.h": [
+          "savedSpine >= spineCount",
+          "/.crosspoint/xtinct-v2/artifacts/",
+          "allowSiblingBookSuggestions"
+        ]
+      }
+    },
+    {
+      "id": "daily-cards",
+      "files": {
+        "src/activities/home/DailyCardsActivity.cpp": [
+          "shouldClaimAutomaticSync",
+          "canStampFresh",
+          "syncFromNTP",
+          "CLOCK_ERROR",
+          "NO_WIFI",
+          "STORAGE_ERROR",
+          "MAX_SCHEDULED_RETRIES"
+        ],
+        "src/util/DailyCardsFreshnessPolicy.h": [
+            "attemptDay != currentDay && freshDay != currentDay",
+            "v1Complete && v2CompleteToday",
+            "return complete ? currentDay : 0"
+        ]
+      }
+    },
+    {
+      "id": "inbox-v2",
+      "files": {
+        "src/activities/home/InboxActivity.cpp": [
+          "File missing - sync again",
+          "recordOpenedBestEffort",
+          "Deleted locally - receipt unavailable",
+          "pageHistory.push",
+          "page-previous",
+          "page-next"
+        ],
+        "src/util/InboxSyncPagingPolicy.h": [
+          "DIRECT_PAGE_CHANGES = 8",
+          "MAX_PAGES_PER_WAKE = 10"
+        ],
+        "src/util/XtinctSyncContract.h": [
+          "MAX_INBOX_ITEMS = 64",
+          "MAX_METADATA_BYTES = 2 * 1024",
+          "opened",
+          "deleted"
+        ],
+        "src/network/XtinctSyncClient.h": [
+          "recordOpenedBestEffort",
+            "isInboxSyncCompleteToday"
+        ]
+      }
+    },
+    {
+      "id": "sleep-screen",
+      "files": {
+        "config/x3-resource-budgets.json": [
+          "\"portrait_width_pixels\": 528",
+          "\"portrait_height_pixels\": 792",
+          "\"bits_per_pixel\": 4",
+          "\"bmp_file_bytes\": 209158"
+        ],
+          "../../scripts/check_x3_sleep_screen.py": [
+          "low_frequency_rmse_max",
+          "edge_gradient_correlation_min",
+          "periodic_autocorrelation_max"
+        ],
+        "src/activities/boot_sleep/SleepActivity.cpp": [
+          "sleep.bmp"
+        ]
+      }
+    },
+    {
+      "id": "file-transfer",
+      "files": {
+        "src/network/FileTransferSafety.h": [
+          "MAX_PATH_BYTES = 512",
+          "MAX_COMPONENT_BYTES = 255",
+          "promotePrepared",
+          "finishDurableWrite",
+          "mayReportPutSuccess"
+        ],
+        "src/network/WebDAVHandler.cpp": [
+          "resetTaskWatchdogIfSubscribed",
+          "Write failed - incomplete upload or disk full",
+          "promotePrepared"
+        ],
+        "src/network/FileTransferPathPolicy.cpp": [
+          "checkNormalizedPath",
+          "normalizeTransferPath"
+        ]
+      }
+    },
+    {
+      "id": "settings-status",
+      "files": {
+        "src/activities/settings/SettingsActivity.cpp": [
+          "SettingAction::DailyWakeStatus",
+          "SettingAction::SdFirmwareUpdate",
+          "SettingAction::Network",
+          "SettingAction::ClearCache"
+        ],
+        "src/SettingsList.h": [
+          "sleepTimeoutMinutes",
+          "showHiddenFiles",
+          "statusBarBattery",
+          "clockUtcOffsetQ"
+        ]
+      }
+    },
+    {
+      "id": "wake-rtc",
+      "files": {
+        "src/util/XtinctWakeSchedule.h": [
+          "Window{8, 15}",
+          "Window{18, 0}",
+          "secondsUntilNextLocalTime"
+        ],
+        "src/util/XtinctWakeRuntimePolicy.h": [
+          "requested && credentialReady",
+          "allowScheduledRetries && transientFailure"
+        ],
+        "src/util/DailyCardsFreshnessPolicy.h": [
+          "BRISBANE_UTC_OFFSET_QUARTER_HOURS_BIASED = 88"
+        ]
+      }
+    },
+    {
+      "id": "crash-report",
+      "files": {
+        "scripts/check_crash_secret_policy.py": [
+          "raw stack serialization",
+          "retained log serialization",
+          "Abort caller PC"
+        ],
+        "src/activities/home/CrashActivity.cpp": [
+          "HalSystem::getPanicInfo(false)",
+          "HalSystem::clearPanic()"
+        ]
+      }
+    },
+    {
+      "id": "pocket-sync",
+      "files": {
+        "src/util/PocketSyncContract.h": [
+          "MAX_MANIFEST_BYTES = 64U * 1024U",
+          "MAX_OBJECTS = 68",
+          "MAX_OBJECT_BYTES = 20U * 1024U * 1024U",
+          "MAX_PACK_BYTES = 64U * 1024U * 1024U",
+          "WINDOW_CHUNKS = 4",
+          "ControlResponseState::Closing",
+          "shouldCheckpoint",
+          "resumeStateRequiresReset",
+          "validCommitProgress",
+          "shouldApplyPlanOperation",
+          "isPackId",
+          "validV2SourceTransition"
+        ],
+        "src/network/PocketSyncStore.cpp": [
+          "MAX_RECEIPT_HISTORY = 16",
+          "Result PocketSyncStore::start(",
+          "start-cleanup-partial",
+          "start-mkdir-pack",
+          "start-write-session",
+          "prepareStreamForResume",
+          "Result PocketSyncStore::sealManifest()",
+          "validateCompletedObject",
+          "bool PocketSyncStore::runCommitPlan()",
+          "writeReceipt",
+          "bool PocketSyncStore::recoverPendingCommit()",
+          ".pstmp",
+          ".psbak"
+        ],
+        "src/network/PocketSyncBleServer.cpp": [
+          "SERVICE_UUID",
+          "CAPABILITIES_UUID",
+          "CONTROL_UUID",
+          "DATA_UUID",
+          "STATUS_UUID",
+          "!queriedThisConnection || length != 74",
+          "store.start",
+          "store.sealManifest",
+          "store.commit",
+          "canAcceptDataFrame"
+        ]
+      }
+    },
+    {
+      "id": "resource-budgets",
+      "files": {
+        "config/x3-resource-budgets.json": [
+          "\"firmware_bin_max_bytes\": 6553600",
+          "\"firmware_bin_min_headroom_bytes\": 49152",
+          "\"total_dram_image_max_bytes\": 155648",
+          "\"tls_13_sync\"",
+          "\"inbox_direct_sync\""
+        ],
+        "scripts/check_x3_resource_budgets.py": [
+          "firmware_bin",
+          "firmware_map",
+          "sdkconfig"
+        ]
+      }
+    }
+  ]
+}

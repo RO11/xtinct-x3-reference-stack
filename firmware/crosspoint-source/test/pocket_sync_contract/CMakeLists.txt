@@ -1,0 +1,3 @@
+add_executable(pocket_sync_contract_tests PocketSyncContractTest.cpp)
+target_link_libraries(pocket_sync_contract_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(pocket_sync_contract_tests)

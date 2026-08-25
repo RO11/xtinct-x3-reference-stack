@@ -1,0 +1,3 @@
+add_executable(button_menu_layout_tests ButtonMenuLayoutTest.cpp)
+target_link_libraries(button_menu_layout_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(button_menu_layout_tests)

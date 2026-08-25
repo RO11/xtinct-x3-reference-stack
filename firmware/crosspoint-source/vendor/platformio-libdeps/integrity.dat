@@ -1,0 +1,19 @@
+Rtc=symlink://freeink-sdk/libs/hardware/Rtc
+SDCardManager=symlink://freeink-sdk/libs/hardware/SDCardManager
+bblanchon/ArduinoJson @ 7.4.2
+Imu=symlink://freeink-sdk/libs/hardware/Imu
+EInkDisplay=symlink://freeink-sdk/libs/display/FreeInkDisplay
+ricmoo/QRCode @ 0.0.1
+bitbank2/PNGdec @ 1.1.6
+https://github.com/wolfSSL/Arduino-wolfSSL.git#9ecc5e79bdcbcf49402a5d967bc232b4c39c0076
+https://github.com/Links2004/arduinoWebSockets.git#1c8b8deaca30b36494a4f6ea4df23ae862b21662
+https://github.com/h2zero/NimBLE-Arduino.git#f66f4fe26306747cd8308e77d755da1863219089
+https://github.com/bitbank2/JPEGDEC.git#86282979224c8a32fd51e091ed5a35b0c699a52b
+BatteryMonitor=symlink://freeink-sdk/libs/hardware/BatteryMonitor
+FreeInkUI=symlink://freeink-sdk/libs/ui/FreeInkUI
+BoardConfig=symlink://freeink-sdk/libs/hardware/BoardConfig
+InputManager=symlink://freeink-sdk/libs/hardware/InputManager
+Icons=symlink://freeink-sdk/libs/assets/Icons
+PowerManager=symlink://freeink-sdk/libs/hardware/PowerManager
+SecureNet=symlink://freeink-sdk/libs/network/SecureNet
+XteinkDetect=symlink://freeink-sdk/libs/hardware/XteinkDetect

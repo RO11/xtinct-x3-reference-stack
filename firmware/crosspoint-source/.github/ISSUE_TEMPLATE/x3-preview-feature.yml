@@ -1,0 +1,30 @@
+name: X3 Preview QA Lab feature
+description: Propose a bounded preview or QA improvement.
+title: "[X3 Preview] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Developer need
+      description: What task is difficult today, and who experiences it?
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence
+    attributes:
+      label: Intended evidence level
+      options:
+        - MODELED
+        - REAL CONTRACT TEST
+        - QEMU
+        - PHYSICAL DEVICE REQUIRED
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Smallest useful proposal
+      description: Describe one bounded flow and how it can be tested with synthetic data.
+    validations:
+      required: true

@@ -1,0 +1,4 @@
+add_executable(inbox_digest_tests InboxDigestTextTest.cpp)
+target_link_libraries(inbox_digest_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+target_include_directories(inbox_digest_tests PRIVATE ${REPO_ROOT}/src)
+gtest_discover_tests(inbox_digest_tests DISCOVERY_MODE PRE_TEST)

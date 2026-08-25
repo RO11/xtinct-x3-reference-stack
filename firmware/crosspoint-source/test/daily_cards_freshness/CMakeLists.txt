@@ -1,0 +1,3 @@
+add_executable(daily_cards_freshness_tests DailyCardsFreshnessPolicyTest.cpp)
+target_link_libraries(daily_cards_freshness_tests PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(daily_cards_freshness_tests)

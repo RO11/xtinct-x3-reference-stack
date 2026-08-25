@@ -1,0 +1,3 @@
+add_executable(XtinctBootRecoveryTest XtinctBootRecoveryTest.cpp)
+target_link_libraries(XtinctBootRecoveryTest PRIVATE crosspoint_test_common GTest::gtest_main)
+gtest_discover_tests(XtinctBootRecoveryTest)

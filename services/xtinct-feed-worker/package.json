@@ -1,0 +1,20 @@
+{
+  "name": "xtinct-feed-worker-reference",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sanitized Cloudflare Worker reference for the public XTINCT Daily Cards V1 and Inbox V2 firmware contracts.",
+  "scripts": {
+    "check": "node --check src/contract.js && node --check src/index.js",
+    "test": "node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.125.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
+

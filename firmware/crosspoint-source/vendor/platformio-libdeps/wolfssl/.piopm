@@ -1,0 +1,1 @@
+{"type": "library", "name": "wolfssl", "version": "5.7.2+sha.9ecc5e7", "spec": {"owner": null, "id": null, "name": "Arduino-wolfSSL", "requirements": null, "uri": "git+https://github.com/wolfSSL/Arduino-wolfSSL.git#9ecc5e79bdcbcf49402a5d967bc232b4c39c0076"}}

@@ -1,0 +1,87 @@
+{
+  "schema": "xtinct-x3-simulator/1",
+  "clock": "2026-01-15T08:00:00Z",
+  "timezone": "Etc/UTC",
+  "batteryPercent": 83,
+  "recentBooks": [
+    {
+      "title": "Preview Lab Field Notes",
+      "author": "Synthetic Demo"
+    }
+  ],
+  "cards": [
+    {
+      "taskId": "device-qa-summary",
+      "title": "Device QA Summary",
+      "status": "Current",
+      "generatedAt": "2026-01-15T06:00:00Z",
+      "summary": "The synthetic navigation, storage and display checks are ready to explore.",
+      "metrics": [
+        { "value": "4", "label": "flows" },
+        { "value": "2", "label": "scenarios" },
+        { "value": "Demo", "label": "source" }
+      ],
+      "sections": [
+        { "heading": "TRY", "lines": ["Navigate with the four hardware buttons", "Open a synthetic report"] },
+        { "heading": "SCOPE", "lines": ["Local fixture data only", "No physical hardware contacted"] }
+      ],
+      "hasReport": true
+    },
+    {
+      "taskId": "reading-queue",
+      "title": "Reading Queue",
+      "status": "Current",
+      "generatedAt": "2026-01-15T07:00:00Z",
+      "summary": "Three generic sample documents demonstrate the local inbox and reader flow.",
+      "metrics": [
+        { "value": "3", "label": "items" },
+        { "value": "0", "label": "external" }
+      ],
+      "sections": [
+        { "heading": "INBOX", "lines": ["All content is synthetic", "Actions remain session-local"] }
+      ],
+      "hasReport": true
+    }
+  ],
+  "inbox": [
+    {
+      "itemId": "sim-daily-edition",
+      "moduleId": "demo-daily",
+      "kind": "epub",
+      "title": "Daily Demo Edition",
+      "createdAt": "2026-01-15T04:00:00Z",
+      "state": "pending",
+      "digest": {
+        "schema": "xtinct.inbox-digest/v1",
+        "summary": "A compact synthetic edition used to demonstrate EPUB download and reader navigation.",
+        "points": ["No account connection required", "All bytes are generated locally"]
+      }
+    },
+    {
+      "itemId": "sim-efficient-typography",
+      "moduleId": "demo-research",
+      "kind": "text",
+      "title": "Efficient Typography for Low-Power Displays",
+      "createdAt": "2026-01-15T03:08:00Z",
+      "state": "pending",
+      "digest": {
+        "schema": "xtinct.inbox-digest/v1",
+        "summary": "Careful font selection and layout can improve legibility while keeping rendering costs predictable.",
+        "points": ["Measure at the native display size", "Test long titles and narrow columns"]
+      }
+    },
+    {
+      "itemId": "sim-offline-weekend",
+      "moduleId": "demo-guide",
+      "kind": "text",
+      "title": "Offline Reading Weekend",
+      "createdAt": "2026-01-15T02:09:00Z",
+      "state": "pending",
+      "digest": {
+        "schema": "xtinct.inbox-digest/v1",
+        "summary": "A generic guide to preparing a small offline library and testing it without network access.",
+        "points": ["Choose a few open-format books", "Verify navigation before disconnecting"]
+      }
+    }
+  ]
+}
