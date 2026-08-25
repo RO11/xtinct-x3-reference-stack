@@ -12,6 +12,11 @@ remaining stability boundary explicit.
 - The Windows simulator unit job now exercises the intentional no-QEMU path in
   a deterministic environment. Optional host QEMU installations can no longer
   turn a three-second HTTP contract test into two unrelated 15-second probes.
+- The official, hash-pinned CrossPoint v1.5.0 read-only baseline is now tracked
+  in the public checkout, so a clean clone can run the documented portable demo
+  and server tests without relying on an ignored local file.
+- Repository text is checked out with LF endings on every runner, keeping the
+  resource-contract hash and its generated human-readable budget sheet in sync.
 - The repository version and generated source package advance to
   `0.1.0-alpha.2`.
 - Release wording now states plainly that the custom firmware is

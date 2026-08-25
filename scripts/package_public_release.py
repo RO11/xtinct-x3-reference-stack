@@ -32,6 +32,7 @@ FIXED_ZIP_TIME = (2026, 8, 25, 0, 0, 0)
 MAX_FILES = 100_000
 MAX_TOTAL_BYTES = 2 * 1024 * 1024 * 1024
 SOURCE_ROOT_ENTRIES = (
+    ".gitattributes",
     ".github",
     ".gitignore",
     "CONTRIBUTING.md",

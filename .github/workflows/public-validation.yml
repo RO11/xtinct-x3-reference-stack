@@ -21,9 +21,13 @@ jobs:
         run: python -B firmware/crosspoint-source/scripts/xtinct_ready27_cache.py --self-test
       - name: Source contracts
         working-directory: firmware/crosspoint-source
+        shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           python -B scripts/check_x3_resource_budgets.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -B test/xtinct_feed_credential_policy/verify_source_contract.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Simulator unit and contract tests
         working-directory: firmware/crosspoint-source/tools/x3-simulator
         shell: pwsh
@@ -33,7 +37,13 @@ jobs:
           $noQemuLocalAppData = Join-Path $env:RUNNER_TEMP 'x3-simulator-no-qemu'
           New-Item -ItemType Directory -Path $noQemuLocalAppData -Force | Out-Null
           $env:LOCALAPPDATA = $noQemuLocalAppData
-          $env:PATH = "$(Split-Path -Parent $python);$env:SystemRoot\System32;$env:SystemRoot"
+          $qemu = Get-Command qemu-system-riscv32 -ErrorAction SilentlyContinue
+          if ($null -ne $qemu) {
+            $qemuDirectory = Split-Path -Parent $qemu.Source
+            $env:PATH = (($env:PATH -split ';') | Where-Object {
+              $_ -and ([IO.Path]::GetFullPath($_).TrimEnd('\') -ine $qemuDirectory.TrimEnd('\'))
+            }) -join ';'
+          }
           & $python -B -m unittest test_run_full_qa.py test_qemu_firmware.py test_network_fixture.py test_server.py -q
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Portable-preview release tests
