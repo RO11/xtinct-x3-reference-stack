@@ -381,8 +381,8 @@ PINNED_PACKAGE_VERSIONS = {
 
 PINNED_REGISTRY_DEPENDENCY_IDENTITIES = {
     "ArduinoJson": pinned_identity(
-        32, 189, 376_196, 157, 28_454,
-        "0adbe053aea2fb8d59f14eaf8806a455cdc92229e9d13eac6b441ab465634525"),
+        32, 189, 375_913, 157, 28_453,
+        "d67886fb6a12cb566a2119694dd65f0016aee9322523947b7b183a4ba20bb3a5"),
     "PNGdec": pinned_identity(
         23, 86, 2_603_398, 63, 11_549,
         "9b36c3df391f8845201e5903a1bcfee545ea0dacdfaab70250ab99c6f3b47ed5"),
@@ -459,14 +459,14 @@ PINNED_GIT_DEPENDENCY_SEED_IDENTITIES = {
         37, 124, 6_113_099, 87, 16_509,
         "17e80043920cec0ae30f939a2a81db1179e3f21eba147639dba4cde7e7c7cd91"),
     "NimBLE-Arduino": pinned_identity(
-        143, 623, 6_171_102, 480, 91_948,
-        "f70a997e776c0dd15c0d4772a143c3d44c1c26091ff82b8bd0b5fcd158032918"),
+        143, 623, 6_170_979, 480, 91_948,
+        "2e287c4730dcf5a5e4b3e7db4a66f0c673f8574ced52e1b35dc6dcbd1cc177ab"),
     "WebSockets": pinned_identity(
         49, 136, 345_255, 87, 18_477,
         "9fa240e49f2398a996796639d662d41311a842003641d3044d491677d65df741"),
     "wolfssl": pinned_identity(
-        17, 335, 46_808_379, 318, 49_853,
-        "1f1894c7a7dfe6ebd332dfbb85a26dcb99754bc8b2faf28e45356ed66831bbc8"),
+        17, 335, 46_807_819, 318, 49_853,
+        "e8bb1a11ac50b8258a90fd5e3e328e93fa0a47644568c682d95e2cb2a0e55c77"),
 }
 # Complete portable source input: four registry trees, four Git-origin trees
 # reconstructed at their exact commits and one path-independent integrity file.
