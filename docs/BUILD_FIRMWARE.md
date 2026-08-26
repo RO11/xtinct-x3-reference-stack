@@ -72,6 +72,18 @@ py -3.11 -B tools/x3-simulator/run_full_qa.py `
 
 Postbuild must use the matching `firmware.bin`, `firmware.map`, effective `sdkconfig.h`, `bootloader.bin`, `partitions.bin` and `boot_app0.bin`. It boots those exact parts in the offline ESP32-C3 QEMU harness.
 
+Before postbuild, atomically replace the repository-root `update.bin` with the
+exact published `firmware.bin`, then re-read its byte count and SHA-256. The
+postbuild runner rejects any mismatch so the canonical install artifact cannot
+silently lag behind the QEMU-tested image.
+
+The source-bound suite also treats content recovery as mandatory. It exercises
+an isolated exact-four Daily Cards V1 response, bounded newest-page selection,
+unauthorized and malformed responses, Inbox V2 cursor and artifact integrity,
+cache-first behavior, retryable receipts/outbox delivery, open/delete actions,
+interrupted transfers, and the Today EPUB path. A static screenshot or fixture
+render is not a substitute for these contract tests.
+
 ## Required release outputs
 
 - `update.bin` copied from the exact verified `firmware.bin`.

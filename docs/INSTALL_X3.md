@@ -13,7 +13,7 @@ This guide is for the **X3 only**. Do not use X4/legacy 480×800 assets or a bin
 PowerShell checksum example:
 
 ```powershell
-Get-FileHash -LiteralPath .\XTINCT-X3-firmware-1.6.2-xtinct.1-update.bin -Algorithm SHA256
+Get-FileHash -LiteralPath .\XTINCT-X3-firmware-1.6.2-xtinct.2-update.bin -Algorithm SHA256
 ```
 
 ## Stage the canonical update

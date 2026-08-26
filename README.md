@@ -2,10 +2,11 @@
 
 An open, reproducible reference implementation for turning an Xteink X3 into a once-a-day personal briefing reader. It extends the MIT-licensed CrossPoint Reader firmware with native Daily Cards V1, Inbox V2, a Today EPUB path, feedback receipts, cache-first recovery, scheduled wake handling, and a four-gray X3 sleep screen.
 
-**Repository release 0.1.0-alpha.2.** This maintenance release keeps the exact
-`1.6.2-xtinct.1` firmware bytes from alpha.1, adds clearer stability evidence,
-and makes the public Windows and Worker validation jobs deterministic. It is
-still a physical-X3-pending candidate, not a stable firmware declaration.
+**Repository release 0.1.0-alpha.3.** This release advances to the exact
+endpoint-free `1.6.2-xtinct.2` firmware image, hardens bounded Daily Cards V1
+and Inbox V2 recovery, and makes a clean public checkout reproduce the pinned
+dependency and source-provenance gates. It is still a physical-X3-pending
+candidate, not a stable firmware declaration.
 
 This repository is the companion to the [X3 Preview & QA Lab](https://github.com/RO11/x3-preview-qa-lab). The Preview Lab models and tests the experience on Windows. This repository contains the device-side source and, once every release gate passes, the exact installable X3 image built from that source.
 
@@ -21,7 +22,7 @@ This repository is the companion to the [X3 Preview & QA Lab](https://github.com
   emulator, clearly separated from the custom installable image.
 - A checksum-bound installable `update.bin` on every firmware-bearing release.
 - Matching dependency source, QEMU boot-set and QA-evidence archives.
-- Daily Cards V1: four small, glanceable cards with revision-aware downloads, checksums, cache-first rendering, refresh progress and failure recovery.
+- Daily Cards V1: exactly four small, glanceable cards with revision-aware downloads, checksums, cache-first rendering, visible refresh progress, catch-up state and bounded failure recovery.
 - Inbox V2: cursor paging, immutable SHA-addressed artifacts, EPUB/text/BMP support, open/delete actions, like/dislike feedback, receipts and retryable outbox delivery.
 - Today EPUB: a compact once-daily reading edition designed for offline use.
 - Sleep-screen delivery: exact 528×792, uncompressed 4-bpp BMP using the X3 panel's native 0/85/170/255 palette.
@@ -90,7 +91,11 @@ The release notes state physical evidence separately. “Compiled,” “simulat
 
 ## Firmware identity
 
-The first public candidate is `v1.6.2-xtinct.1` / `BUILD-162-XTINCT1-PUBLIC`. It starts unconfigured and disabled. The repository tag and firmware version are separate: the repository can publish documentation or packaging fixes without pretending the device image changed.
+This public candidate is `v1.6.2-xtinct.2` /
+`BUILD-162-XTINCT2-PUBLIC`. It starts unconfigured and disabled, contains no
+private relay address or credential, and phones home nowhere by default. The
+repository tag and firmware version are separate: the repository can publish
+documentation or packaging fixes without pretending the device image changed.
 
 ## Licensing
 
