@@ -446,22 +446,24 @@ GIT_DEPENDENCY_SPECS = (
 )
 
 PINNED_LIBDEPS_CONTROL_FILES = {
-    "integrity.dat": (1_117, "db6a1086991f27030af00d57375da5e8a45557a9e8d3df1f8eef57f865edb6d8"),
+    "integrity.dat": (1_099, "6784c83f51bc4290df836095e0d39b0316cffbf8747b31c14802c246e96861be"),
 }
 
-# Derived from safe ``git archive`` reconstruction of each exact commit plus
-# its reviewed working-tree patch (where specified) and exact root .piopm.
-# Git metadata itself is never copied into a private READY27 core.
+# Derived from the public vendored trees for each exact commit plus the
+# reviewed working-tree patch (where specified) and exact root .piopm. The
+# public source intentionally omits upstream-ignored desktop metadata, a stale
+# example object file and an unused example CA bundle. Git metadata itself is
+# never copied into a private READY27 core.
 PINNED_GIT_DEPENDENCY_SEED_IDENTITIES = {
     "JPEGDEC": pinned_identity(
-        37, 126, 6_194_406, 89, 16_807,
-        "114a8a216b825e10a776506d1f51f61c1c74071e10ef9f07b6ab2023530947c7"),
+        37, 124, 6_113_099, 87, 16_509,
+        "17e80043920cec0ae30f939a2a81db1179e3f21eba147639dba4cde7e7c7cd91"),
     "NimBLE-Arduino": pinned_identity(
         143, 623, 6_171_102, 480, 91_948,
         "f70a997e776c0dd15c0d4772a143c3d44c1c26091ff82b8bd0b5fcd158032918"),
     "WebSockets": pinned_identity(
-        49, 137, 580_326, 88, 18_662,
-        "845b9fe63ec1dc9ff2914244e9fbddd18911fc28315370eb80e37ed714d62417"),
+        49, 136, 345_255, 87, 18_477,
+        "9fa240e49f2398a996796639d662d41311a842003641d3044d491677d65df741"),
     "wolfssl": pinned_identity(
         17, 335, 46_808_379, 318, 49_853,
         "1f1894c7a7dfe6ebd332dfbb85a26dcb99754bc8b2faf28e45356ed66831bbc8"),
@@ -472,8 +474,8 @@ PINNED_GIT_DEPENDENCY_SEED_IDENTITIES = {
 # ``cwd`` field must name the actual public checkout; absolute paths are never
 # shipped or pinned.
 PINNED_PORTABLE_DEPENDENCY_SOURCE_IDENTITY = pinned_identity(
-    387, 1_795, 63_979_571, 1_408, 276_027,
-    "ef2564aa9aa1d1de2e8eaba2b5d5a8664251d8b4a49d228bbc28e2f146b1bf55",
+    387, 1_792, 63_662_209, 1_405, 275_516,
+    "c2676b9efc5960515ac556b027cead3a161122c05cf7ea2b619165b1fd55fdda",
 )
 
 LOCAL_LINK_SPECS = {
@@ -491,12 +493,7 @@ LOCAL_LINK_SPECS = {
     "XteinkDetect": "symlink://freeink-sdk/libs/hardware/XteinkDetect",
 }
 
-PINNED_SHIPPED_BINARY_INPUTS = {
-    "JPEGDEC/linux/examples/jpeg_perf_test/main.o": (
-        69_792,
-        "8b344ada9e5c11de586b2281925ad25664df71473cbbeeebd3f82ba8c53fd005",
-    ),
-}
+PINNED_SHIPPED_BINARY_INPUTS: dict[str, tuple[int, str]] = {}
 
 
 def require(condition: bool, message: str) -> None:
@@ -3248,8 +3245,8 @@ def self_test() -> None:
                 {spec.name for spec in GIT_DEPENDENCY_SPECS},
                 "Git dependency seed identity allowlist changed")
         require(PINNED_PORTABLE_DEPENDENCY_SOURCE_IDENTITY == pinned_identity(
-            387, 1_795, 63_979_571, 1_408, 276_027,
-            "ef2564aa9aa1d1de2e8eaba2b5d5a8664251d8b4a49d228bbc28e2f146b1bf55",
+            387, 1_792, 63_662_209, 1_405, 275_516,
+            "c2676b9efc5960515ac556b027cead3a161122c05cf7ea2b619165b1fd55fdda",
         ), "portable dependency source identity changed")
         require(GIT_DEPENDENCY_SPECS[0].diff_autocrlf == "true" and
                 GIT_DEPENDENCY_SPECS[1].diff_autocrlf == "false" and
