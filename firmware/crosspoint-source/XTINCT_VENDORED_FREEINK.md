@@ -7,7 +7,7 @@ than requiring a nested Git checkout.
 - Upstream revision: `a485dc46ef5fb2283e4bdb674002ddbef97a9268`
 - XTINCT patch: `patches/freeink-secureclient-verified-tls.patch`
 - Patched tree inventory: 385 files
-- Patched tree SHA-256: `6e807c9c99460c9802f6fac75f049b18cf815b8876910c6b87cb044be9e412c8`
+- Patched tree SHA-256: `88bc44960c820d66c6bfaf81093b17db89745a486bacbedeb357adedba409674`
 
 The inventory digest is SHA-256 over sorted UTF-8 records in the form
 `path NUL byte-count NUL file-sha256 LF`. The build-time
