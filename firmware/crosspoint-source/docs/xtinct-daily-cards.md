@@ -280,9 +280,10 @@ Both transient source patches have independent exact-byte backups, interrupted-
 run recovery and `finally` restoration. The `finally` path attempts both
 restores before reporting either failure, and both reviewed originals are
 verified before any artifact can be published.
-Because this repository's Windows path contains spaces, the wrapper gives the
-same source tree a temporary no-space drive-letter view with the exact
-System32 `subst.exe`; it does not copy the source or create a junction. The
+The wrapper gives the same source tree a temporary, deterministic no-space
+drive-letter view with the exact System32 `subst.exe`, whether the physical
+checkout path contains spaces or not; it does not copy the source or create a
+junction. The
 drive must be unused in both the logical-drive mask and DOS-device namespace,
 and an exclusive owner sidecar records the drive, physical target, process and
 random nonce. The wrapper verifies the exact DOS-device target plus

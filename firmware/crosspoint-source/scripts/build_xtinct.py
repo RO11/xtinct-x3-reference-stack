@@ -998,8 +998,6 @@ class SubstProjectAlias:
     def __enter__(self) -> Path:
         require_plain_directory(self.core_dir, "PlatformIO core directory")
         require_plain_directory(self.project_root, "XTINCT physical project root")
-        require(any(character.isspace() for character in str(self.project_root)),
-                "XTINCT SUBST alias is unnecessary because the physical project path has no whitespace")
         stale_markers = list(self.core_dir.glob(f"{SUBST_MARKER_PREFIX}*.owner"))
         require(not stale_markers, f"Stale XTINCT SUBST ownership markers require inspection: {stale_markers}")
 
