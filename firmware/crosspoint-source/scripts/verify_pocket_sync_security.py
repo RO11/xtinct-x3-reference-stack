@@ -1876,12 +1876,16 @@ def verify_platform_configuration(project_root: Path) -> None:
              'MAX_PLATFORMIO_JOBS = 2' in build_wrapper and
              '"PLATFORMIO_RUN_JOBS": str(MAX_PLATFORMIO_JOBS)' in build_wrapper and
              'env.get("PLATFORMIO_RUN_JOBS") == str(MAX_PLATFORMIO_JOBS)' in build_wrapper and
+             'with owned_alias as project_alias:' in build_wrapper and
              'IDF_BUILDER_BOUNDED_LDGEN_HELPER' in build_wrapper and
             'os.path.samefile(candidate, fragment)' in build_wrapper and
             'cd /d "{}" && {}' in build_wrapper and
             'format(FRAMEWORK_DIR, cmd)' in build_wrapper and
             'len(args["fragments"]) > 6000' in build_wrapper,
             "Windows short-path build policy is not wired")
+    require("SUBST alias is unnecessary because the physical project path has no whitespace"
+            not in build_wrapper,
+            "No-space public checkouts must retain the verified SUBST build path")
     verifier_source = read_text(project_root / "scripts" / "verify_pocket_sync_security.py")
     verify_virtual_sdk_probe_state_source_mutations(build_wrapper, verifier_source)
     for fragment in (
