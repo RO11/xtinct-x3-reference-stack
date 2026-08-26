@@ -12,8 +12,10 @@ except NameError:
 
 
 MARKER = "/* CrossPoint wolfSSL compatibility overrides */"
-PATCHED_SETTINGS_BYTES = 20_014
-PATCHED_SETTINGS_SHA256 = "311eb5652e2f487f56d45fdbdb6be9d61334a18a1bc2a2e2f962dac749ece5cc"
+# Canonical public Git bytes use LF even when the Windows build checkout uses
+# CRLF elsewhere. Pin the exact vendored payload copied into the private core.
+PATCHED_SETTINGS_BYTES = 19_513
+PATCHED_SETTINGS_SHA256 = "f499b4cbe9b477c771b8e52915c85b90317ed43e4878daafa044263482e837eb"
 REQUIRED_TLS_FLAGS = (
     "-DFREEINK_NET_WOLFSSL=1",
     "-DWOLFSSL_USER_SETTINGS",
