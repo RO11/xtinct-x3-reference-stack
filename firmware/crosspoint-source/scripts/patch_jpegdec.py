@@ -25,12 +25,12 @@ PATCHED_JPEG_INL_BYTES = 252_625
 PATCHED_JPEG_INL_SHA256 = "fd5d20da6e01d7900c6b48413bb1b19ed10fe82960231c28346c353820e78967"
 PATCH_SPECS = {
     "0001-redirect-pmcu-on-mcu-skip.patch": (
-        1_162,
-        "7975565b74eec27b64a562b9cbafed1c4200f62a63e77773f13ebdfd3554740e",
+        1_134,
+        "59e69d602446976d36bd5505258353ce1e8dc96e9d2626d25d321817d8418ae2",
     ),
     "0002-guard-dc-writes-on-mcu-skip.patch": (
-        1_748,
-        "9c87b9f43f17625bf8dd74ccfc75f490b2d68e1ce7333e20e921fc7ae6e0530f",
+        1_707,
+        "1473c0b769c8f0c3e70b3e385670225b38b0e3f292e5ca3e4c38290363dccadb",
     ),
 }
 
