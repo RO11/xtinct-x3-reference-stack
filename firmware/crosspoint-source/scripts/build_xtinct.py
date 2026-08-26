@@ -282,9 +282,9 @@ REPRODUCIBLE_PATH_MAP_TARGETS = tuple(
     f"/xtinct/{root}" for root in VIRTUAL_PROJECT_PATH_ROOTS
 )
 MINIZ_SOURCE_RELATIVE = Path("lib/miniz/third_party/miniz.c")
-EXPECTED_MINIZ_SOURCE_BYTES = 358274
+EXPECTED_MINIZ_SOURCE_BYTES = 350352
 EXPECTED_MINIZ_SOURCE_SHA256 = (
-    "9fbea1793983dc516c0099a64c7045e21bcdcdeef52c53e299eda2bf5e8348ef"
+    "e2c1aeb66eef9191d8c3feb164db2def2335a61d039bf04ed849f6b042433b30"
 )
 EXPECTED_MINIZ_VIRTUAL_SOURCE_PATH = "//xtinct/source/lib/miniz/third_party/miniz.c"
 ARTIFACT_PRIVACY_POLICY = "nul-ascii-utf16le-embedded-drive-unc-uri-aware-v3"
