@@ -2,8 +2,8 @@
 
 This directory is a sanitized, account-neutral Cloudflare Worker reference for the read contracts implemented by the public XTINCT X3 firmware:
 
-- Daily Cards V1: conditional manifest fetches, immutable 32-hex card revisions and optional revision-addressed text reports;
-- Inbox V2: bounded decimal-cursor paging, immutable SHA-256 artifacts, tombstones and idempotent receipt batches;
+- Daily Cards V1: an exact four-entry manifest, deterministic empty-state placeholders, conditional fetches, immutable 32-hex card revisions and optional revision-addressed text reports;
+- Inbox V2: bounded decimal-cursor paging, immutable SHA-256 artifacts, expiry/overflow tombstones, a 64-item live cap and idempotent receipt batches;
 - producer-facing write routes for publishing sample cards and Inbox artifacts without putting write authority on the X3;
 - a private receipt readback route so a producer can consume `like`, `dislike`, `opened`, progress and other device feedback.
 
@@ -37,6 +37,8 @@ Inbox V2 supports `card`, `text`, `image-1bit`, `epub`, `action` and `sleep-scre
 - R2 owns report and artifact bytes.
 - A producer writes immutable bytes first and publishes the D1 pointer second. A failed database commit can leave an unreachable R2 object, but cannot expose a card or delivery that points at half-written bytes.
 - V2 delivery and tombstone entries use D1's monotonic integer primary key as the cursor. A newer change for the same `item_id` compacts its older pending change so a page never contains duplicate delivery IDs that the firmware would reject.
+- Each V2 sync scans at most 89 newest live rows (88 plus a sentinel), repairs at most 24 expired or overflow items in one D1 transaction, and serves no cursor page until the live set has converged to at most 64 items. Tombstones are inserted and deliveries deleted with the same exact item/delivery/revision predicate, so a concurrent replacement is preserved.
+- The sync count and `limit + 1` change rows are read in one D1 batch snapshot. This avoids advancing a device cursor from a page whose `has_more` decision came from a different database state.
 
 This is a small reference service, not a multi-tenant publishing platform. Add Access/WAF policy, rate limits, backups, retention and operational monitoring before accepting untrusted producers.
 
@@ -86,6 +88,8 @@ Content-Type: application/json
 
 An AI or scheduled task should validate its complete result before making this single external write. The endpoint is idempotent for byte-identical content.
 
+When no producer has published a task yet, the manifest still contains all four firmware task IDs in firmware order. The Worker derives a stable empty-state card for that task. Its current URL is `private, no-cache`; the matching revision-pinned URL is `private, immutable`; unrelated revisions and placeholder reports are `404`. A retained D1 row with mismatched card identity is treated as corruption and stops safely with `500` instead of being hidden behind a placeholder.
+
 ## Publishing an Inbox V2 item
 
 Publishing is intentionally two-phase so the feed never advertises unknown bytes.
@@ -118,6 +122,10 @@ Authorization: Bearer <WRITE_TOKEN>
 ```
 
 That publishes a revision-bound tombstone. The reference keeps the newest pending change per `item_id`; deleted cursor numbers remain gaps and are never reused.
+
+Expiry and capacity enforcement happens at sync time. Expired rows are repaired before overflow is calculated, then only the newest 64 non-expired rows are retained. A repair that needs another bounded pass, or that observes a concurrent replacement, returns `503 repair_pending` with `Retry-After: 1` and no cursor; the client must retry the same cursor. Publishing remains a short atomic write and does not claim that later repair or device sync has happened.
+
+The deliberately simple D1 schema has no per-device acknowledged sync cursor. It therefore retains one pending delivery or tombstone change per `item_id` until that item is replaced; tombstones are not pruned merely because one reader may have observed them. Add an explicit device-cursor/retention design before introducing tombstone cleanup. R2 artifact lifecycle cleanup is a separate operation and must not remove bytes referenced by a live delivery.
 
 ## Reading device feedback
 

@@ -197,7 +197,9 @@ bool isTransientFailure(const XtinctFeedClient::SyncResult result) {
 }
 
 bool isTransientFailure(const XtinctSyncClient::SyncResult result) {
-  return result == XtinctSyncClient::SyncResult::NO_WIFI || result == XtinctSyncClient::SyncResult::NETWORK_ERROR;
+  return result == XtinctSyncClient::SyncResult::NO_WIFI ||
+         result == XtinctSyncClient::SyncResult::NETWORK_ERROR ||
+         result == XtinctSyncClient::SyncResult::CATCH_UP_PENDING;
 }
 
 void logHeapStage(const char* stage) {
@@ -495,6 +497,14 @@ void DailyCardsActivity::loop() {
 }
 
 const char* DailyCardsActivity::syncStatusText() const {
+  // When Cards succeeded, surface any Inbox-specific failure instead of
+  // misleadingly reporting only the V1 lane as current. The cached card stays
+  // readable, while the user gets the reason V2 content did not finish.
+  if (v1SyncComplete(syncResult) &&
+      inboxSyncResult != XtinctSyncClient::SyncResult::UPDATED &&
+      inboxSyncResult != XtinctSyncClient::SyncResult::CURRENT) {
+    return XtinctSyncClient::resultMessage(inboxSyncResult);
+  }
   switch (syncResult) {
     case XtinctFeedClient::SyncResult::UPDATED:
       return tr(STR_DAILY_CARDS_UPDATED);

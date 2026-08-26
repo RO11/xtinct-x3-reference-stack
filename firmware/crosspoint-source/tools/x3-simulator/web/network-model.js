@@ -9,6 +9,7 @@
 export const SIM_READ_TOKEN = "synthetic-read-token";
 export const DIRECT_PAGE_CHANGES = 8;
 export const MAX_PAGES_PER_WAKE = 10;
+export const MAX_INBOX_ITEMS = 64;
 export const MAX_SYNC_BODY_BYTES = 28 * 1024;
 export const MAX_MANIFEST_BYTES = 8 * 1024;
 export const MAX_CARD_BYTES = 16 * 1024;
@@ -263,7 +264,10 @@ function validateManifest(value, responseEtag) {
   assertContract(value && typeof value === "object" && !Array.isArray(value), "V1 manifest must be an object");
   assertContract(value.schema === 1 && isBoundedAscii(value.etag, 95), "V1 manifest schema or ETag is invalid");
   assertContract(!responseEtag || responseEtag === value.etag, "V1 response/body ETags differ");
-  assertContract(Array.isArray(value.cards) && value.cards.length <= 4, "V1 cards must be an array of at most four");
+  assertContract(
+    Array.isArray(value.cards) && value.cards.length === V1_TASK_IDS.length,
+    "V1 manifest must contain all four fixed card slots"
+  );
   const seen = new Set();
   const cards = value.cards.map(reference => {
     assertContract(reference && typeof reference === "object", "V1 card reference must be an object");
@@ -697,7 +701,7 @@ export class X3NetworkModel {
       }
     }
     this.inboxCompleteToday = fullyCaughtUp;
-    this.last.inbox = changed ? "UPDATED" : "CURRENT";
+    this.last.inbox = fullyCaughtUp ? (changed ? "UPDATED" : "CURRENT") : "CATCH_UP_PENDING";
     this.last.pages = pages;
     this._queueEvent(
       { item_id: "device-status", revision: "0".repeat(64) },
@@ -715,7 +719,9 @@ export class X3NetworkModel {
   }
 
   inbox() {
-    return sortedInbox(this.inboxMetadata).map(item => ({
+    // Match the firmware's bounded over-capacity fallback: retain visibility
+    // of the newest 64 instead of presenting an empty Inbox.
+    return sortedInbox(this.inboxMetadata).slice(0, MAX_INBOX_ITEMS).map(item => ({
       deliveryId: item.delivery_id,
       itemId: item.item_id,
       moduleId: item.module_id,

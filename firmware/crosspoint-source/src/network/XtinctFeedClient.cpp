@@ -621,7 +621,10 @@ bool XtinctFeedClient::parseManifest(const char* body, const size_t bodyLength, 
       return false;
     }
   }
-  return true;
+  // Daily Cards V1 is a fixed four-slot contract. Accepting a partial
+  // manifest would make the transaction commit prune an otherwise valid
+  // last-known card for every omitted producer.
+  return remoteCardCount == TASK_COUNT;
 }
 
 bool XtinctFeedClient::writeTransactionPlan(const V1TransactionPlan& plan) {
@@ -1174,6 +1177,7 @@ XtinctFeedClient::SyncResult XtinctFeedClient::downloadAndStageChangedCards(V1Tr
     if (!fetched || status != 200) {
       LOG_ERR("XFEED", "Card fetch failed for %s revision %.8s (status=%d)", remoteCards[i].id,
               remoteCards[i].revision, status);
+      if (status == 401 || status == 403) return SyncResult::UNAUTHORIZED;
       return body.limitExceeded() ? SyncResult::INVALID_DATA : SyncResult::NETWORK_ERROR;
     }
     auto parsedCard = makeUniqueNoThrow<XtinctDailyCard>();

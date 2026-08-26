@@ -44,6 +44,7 @@
     {"id":"CARDS-06","area":"Daily Cards","claim":"No Wi-Fi, clock, malformed payload, network and storage errors are distinct","gates":["network-simulator","source-contracts","ui-surface"],"release_blocking":true},
     {"id":"CARDS-07","area":"Daily Cards","claim":"Opening a full report uses the TXT reader and returns to Cards","gates":["simulator-js","ui-surface","source-contracts"],"release_blocking":true},
     {"id":"CARDS-08","area":"Daily Cards","claim":"Scheduled transient retries are bounded and diagnostic wakes never retry","gates":["behavior-model","native-contracts","source-contracts"],"release_blocking":true},
+    {"id":"CARDS-09","area":"Daily Cards","claim":"A partial fixed-slot manifest is rejected before it can prune a valid cached card","gates":["content-recovery-source-contract","network-simulator"],"release_blocking":true},
 
     {"id":"INBOX-01","area":"Inbox V2","claim":"Modeled sync downloads paged artifact and metadata changes","gates":["network-simulator","ui-surface"],"release_blocking":true},
     {"id":"INBOX-02","area":"Inbox V2","claim":"Eight changes per page and ten pages per wake are hard bounds","gates":["source-contracts","native-contracts","resource-source"],"release_blocking":true},
@@ -57,6 +58,7 @@
     {"id":"INBOX-10","area":"Inbox V2","claim":"Missing artifact says File missing - sync again","gates":["network-simulator","source-contracts","ui-surface"],"release_blocking":true},
     {"id":"INBOX-11","area":"Inbox V2","claim":"Interrupted sync retries from durable cursor without losing earlier items","gates":["network-simulator","native-contracts"],"release_blocking":true},
     {"id":"INBOX-12","area":"Inbox V2","claim":"Same-day complete cursor-matched first page can use the fast index","gates":["native-contracts","source-contracts","network-simulator"],"release_blocking":true},
+    {"id":"INBOX-13","area":"Inbox V2","claim":"Ten-page exhaustion reports catch-up pending and over-capacity recovery keeps the newest 64 visible","gates":["content-recovery-source-contract","network-simulator"],"release_blocking":true},
 
     {"id":"SLEEP-01","area":"Sleep","claim":"Canonical sleep.bmp is exact 528x792 four-gray 4-bpp and 209158 bytes","gates":["sleep-asset","simulator-js"],"release_blocking":true},
     {"id":"SLEEP-02","area":"Sleep","claim":"Tone, edge detail, gutters and periodic-grid scores pass against uncropped master","gates":["sleep-asset"],"release_blocking":true},

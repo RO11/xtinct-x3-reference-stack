@@ -1547,6 +1547,7 @@ size_t scanInboxPage(XtinctInboxItem* items, const size_t capacity,
   size_t eligibleCount = 0;
   size_t retainedCount = 0;
   bool allMetadataValid = true;
+  bool overCapacity = false;
   bool ok = true;
   while (ok) {
     HalFile entry = directory.openNextFile();
@@ -1562,10 +1563,7 @@ size_t scanInboxPage(XtinctInboxItem* items, const size_t capacity,
     }
     char fileItemId[33];
     if (!xtinct::sync_v2::managedMetadataItemId(name, fileItemId)) continue;
-    if (++metadataCount > xtinct::sync_v2::MAX_INBOX_ITEMS) {
-      ok = false;
-      break;
-    }
+    if (++metadataCount > xtinct::sync_v2::MAX_INBOX_ITEMS) overCapacity = true;
     char path[160];
     if (std::snprintf(path, sizeof(path), "%s/%s", INBOX_DIR, name) >=
         static_cast<int>(sizeof(path))) {
@@ -1594,8 +1592,15 @@ size_t scanInboxPage(XtinctInboxItem* items, const size_t capacity,
     LOG_ERR("XSYNC", "Inbox page load refused: owned directory exceeded its bound");
     return 0;
   }
+  if (overCapacity) {
+    // A damaged or historically over-retained cache must not turn a valid
+    // newest page into an apparently empty Inbox. Keep the scan bounded by
+    // MAX_INBOX_ATOMIC_SCAN_FILES, return only the caller's fixed-size newest
+    // selection, and refuse to persist a "complete" fast-page marker.
+    LOG_ERR("XSYNC", "Inbox metadata exceeds the 64-item bound; showing a bounded newest-page fallback");
+  }
   hasOlderItems = eligibleCount > retainedCount;
-  scanComplete = allMetadataValid;
+  scanComplete = allMetadataValid && !overCapacity;
   return retainedCount;
 }
 
@@ -2161,11 +2166,12 @@ XtinctSyncClient::SyncResult XtinctSyncClient::sync() {
       invalidateFastFirstPage();
     }
   } else {
-    // UPDATED/CURRENT can also mean the ten-page safety cap was reached.
-    // Never advertise that partial state as today's complete first page.
+    // The ten-page safety cap leaves a durable, resumable partial cursor.
+    // Never advertise that state as today's complete first page.
     invalidateFastFirstPage();
   }
-  finalResult = changed ? SyncResult::UPDATED : SyncResult::CURRENT;
+  finalResult = fullyCaughtUp ? (changed ? SyncResult::UPDATED : SyncResult::CURRENT)
+                              : SyncResult::CATCH_UP_PENDING;
   queueDeviceStatus(finalResult);
   sendPendingAcks();
   return finalResult;
@@ -2192,6 +2198,8 @@ const char* XtinctSyncClient::resultMessage(const SyncResult result) {
       return "updated";
     case SyncResult::CURRENT:
       return "current";
+    case SyncResult::CATCH_UP_PENDING:
+      return "more content waiting";
     case SyncResult::NO_CONFIG:
       return "not configured";
     case SyncResult::NO_WIFI:

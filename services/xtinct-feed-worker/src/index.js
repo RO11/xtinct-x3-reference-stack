@@ -26,6 +26,14 @@ const JSON_HEADERS = Object.freeze({
   "X-Content-Type-Options": "nosniff",
 });
 
+const V1_PLACEHOLDER_TIME = "1970-01-01T00:00:00.000Z";
+const V1_PLACEHOLDER_TITLES = Object.freeze({
+  "market-briefing": "Market Briefing: awaiting publication",
+  "weekday-freelancer-scan": "Weekday Freelancer Scan: awaiting publication",
+  "3d-job-search": "3D Job Search: awaiting publication",
+  "outlook-attention-watch": "Outlook Attention Watch: awaiting publication",
+});
+
 function jsonResponse(value, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(value), {
     status,
@@ -118,16 +126,47 @@ function safeJsonParse(value) {
   return JSON.parse(value);
 }
 
+async function buildV1Placeholder(taskId) {
+  return (await buildV1Card(taskId, {
+    generated_at: V1_PLACEHOLDER_TIME,
+    title: V1_PLACEHOLDER_TITLES[taskId],
+    summary: "No published card is available for this task yet.",
+    priority: 0,
+    state: "empty",
+    metrics: [],
+    sections: [{ heading: "Status", lines: ["Waiting for the next successful producer run."] }],
+  })).card;
+}
+
+function parseStoredV1Card(row, taskId, revision) {
+  if (!isV1Revision(revision) || typeof row?.card_json !== "string" ||
+      utf8Length(row.card_json) > MAX.v1CardBytes) {
+    throw new Error("stored V1 card identity or size is invalid");
+  }
+  const card = safeJsonParse(row.card_json);
+  if (!isPlainObject(card) || card.schema !== 1 || card.task_id !== taskId || card.revision !== revision) {
+    throw new Error("stored V1 card identity does not match its D1 pointer");
+  }
+  return row.card_json;
+}
+
 async function handleV1Manifest(request, env) {
   const rows = (await env.DB.prepare(
-    "SELECT task_id, revision FROM v1_cards_current ORDER BY task_id",
+    "SELECT task_id, revision, card_json FROM v1_cards_current ORDER BY task_id",
   ).all()).results ?? [];
-  const byTask = new Map(rows.map((row) => [row.task_id, row.revision]));
-  const cards = V1_TASK_IDS.filter((taskId) => isV1Revision(byTask.get(taskId))).map((taskId) => ({
-    id: taskId,
-    revision: byTask.get(taskId),
-    url: `/v1/cards/${taskId}.json`,
-  }));
+  const byTask = new Map(rows.map((row) => [row.task_id, row]));
+  const cards = [];
+  for (const taskId of V1_TASK_IDS) {
+    const row = byTask.get(taskId);
+    let revision;
+    if (row) {
+      parseStoredV1Card(row, taskId, row.revision);
+      revision = row.revision;
+    } else {
+      revision = (await buildV1Placeholder(taskId)).revision;
+    }
+    cards.push({ id: taskId, revision, url: `/v1/cards/${taskId}.json` });
+  }
   const etag = `"v1-${await sha256Hex(canonicalJson(cards))}"`;
   if (request.headers.get("if-none-match") === etag) {
     return new Response(null, { status: 304, headers: { ETag: etag, "Cache-Control": "private, no-cache" } });
@@ -150,15 +189,30 @@ async function handleV1Card(url, env, taskId) {
     return errorResponse(400, "invalid_revision", "revision must be 32 lowercase hex characters");
   }
   const statement = requestedRevision === null
-    ? env.DB.prepare("SELECT card_json FROM v1_cards_current WHERE task_id = ?1").bind(taskId)
-    : env.DB.prepare("SELECT card_json FROM v1_card_versions WHERE task_id = ?1 AND revision = ?2")
+    ? env.DB.prepare("SELECT revision, card_json FROM v1_cards_current WHERE task_id = ?1").bind(taskId)
+    : env.DB.prepare("SELECT revision, card_json FROM v1_card_versions WHERE task_id = ?1 AND revision = ?2")
       .bind(taskId, requestedRevision);
   const row = await statement.first();
-  if (!row) return errorResponse(404, "not_found", "card revision is not retained");
-  if (typeof row.card_json !== "string" || utf8Length(row.card_json) > MAX.v1CardBytes) {
-    throw new RangeError("stored V1 card exceeds firmware bound");
+  if (!row) {
+    const placeholder = await buildV1Placeholder(taskId);
+    if (requestedRevision !== null && requestedRevision !== placeholder.revision) {
+      return errorResponse(404, "not_found", "card revision is not retained");
+    }
+    return new Response(JSON.stringify(placeholder), {
+      headers: {
+        ...JSON_HEADERS,
+        "Cache-Control": requestedRevision === null ? "private, no-cache" : "private, immutable",
+      },
+    });
   }
-  return new Response(row.card_json, { headers: { ...JSON_HEADERS, "Cache-Control": "private, no-cache" } });
+  const revision = requestedRevision ?? row.revision;
+  const cardJson = parseStoredV1Card(row, taskId, revision);
+  return new Response(cardJson, {
+    headers: {
+      ...JSON_HEADERS,
+      "Cache-Control": requestedRevision === null ? "private, no-cache" : "private, immutable",
+    },
+  });
 }
 
 async function handleV1Report(env, taskId, revision) {
@@ -183,15 +237,113 @@ async function handleV1Report(env, taskId, revision) {
   });
 }
 
+function parseStoredV2Delivery(row) {
+  if (typeof row?.delivery_json !== "string" || utf8Length(row.delivery_json) > MAX.v2SyncBytes) {
+    throw new Error("stored V2 delivery exceeds the firmware page bound");
+  }
+  const delivery = safeJsonParse(row.delivery_json);
+  if (!isPlainObject(delivery) || delivery.item_id !== row.item_id || delivery.delivery_id !== row.delivery_id ||
+      delivery.revision !== row.revision || !isSafeId(row.item_id) || !isSafeId(row.delivery_id) ||
+      !isSha256(row.revision)) {
+    throw new Error("stored V2 delivery identity is invalid");
+  }
+  if (delivery.expires_at !== null &&
+      (typeof delivery.expires_at !== "string" || !Number.isFinite(Date.parse(delivery.expires_at)))) {
+    throw new Error("stored V2 delivery expiry is invalid");
+  }
+  return delivery;
+}
+
+function v2Tombstone(row, delivery, timestamp, expired) {
+  const expiresAt = delivery.expires_at;
+  return {
+    delivery_id: row.delivery_id,
+    item_id: row.item_id,
+    revision: row.revision,
+    deleted_at: expired && typeof expiresAt === "string" ? expiresAt : timestamp,
+  };
+}
+
+async function reconcileV2Deliveries(env, timestamp) {
+  const selected = (await env.DB.prepare(
+    "SELECT item_id, delivery_id, revision, delivery_json, updated_at FROM v2_deliveries " +
+    "ORDER BY updated_at DESC, item_id DESC LIMIT ?1",
+  ).bind(MAX.v2ReconcileScan + 1).all()).results ?? [];
+  const hasScanSentinel = selected.length > MAX.v2ReconcileScan;
+  const rows = selected.slice(0, MAX.v2ReconcileScan).map((row) => ({
+    row,
+    delivery: parseStoredV2Delivery(row),
+  }));
+  const timestampMs = Date.parse(timestamp);
+  const expired = rows.filter(({ delivery }) =>
+    typeof delivery.expires_at === "string" && Date.parse(delivery.expires_at) <= timestampMs);
+  const live = rows.filter(({ delivery }) =>
+    delivery.expires_at === null || Date.parse(delivery.expires_at) > timestampMs);
+  const overflow = live.slice(MAX.v2LiveDeliveries);
+  const candidates = [...expired, ...overflow];
+  const victims = candidates.slice(0, MAX.v2ReconcileItems);
+  if (victims.length === 0) return { pending: hasScanSentinel, repaired: 0, stale: 0 };
+
+  const statements = [];
+  for (const { row, delivery } of victims) {
+    const isExpired = typeof delivery.expires_at === "string" && Date.parse(delivery.expires_at) <= timestampMs;
+    const tombstoneJson = JSON.stringify(v2Tombstone(row, delivery, timestamp, isExpired));
+    statements.push(
+      env.DB.prepare(
+        "INSERT OR REPLACE INTO v2_changes (item_id, change_type, payload_json) " +
+        "SELECT item_id, 'tombstone', ?1 FROM v2_deliveries " +
+        "WHERE item_id = ?2 AND delivery_id = ?3 AND revision = ?4",
+      ).bind(tombstoneJson, row.item_id, row.delivery_id, row.revision),
+      env.DB.prepare(
+        "DELETE FROM v2_deliveries WHERE item_id = ?1 AND delivery_id = ?2 AND revision = ?3",
+      ).bind(row.item_id, row.delivery_id, row.revision),
+    );
+  }
+  const results = await env.DB.batch(statements);
+  let repaired = 0;
+  let stale = 0;
+  for (let index = 0; index < results.length; index += 2) {
+    const inserted = d1Changes(results[index]);
+    const removed = d1Changes(results[index + 1]);
+    if (inserted === 1 && removed === 1) repaired += 1;
+    else if (inserted === 0 && removed === 0) stale += 1;
+    else throw new Error("V2 reconciliation transaction produced inconsistent identity results");
+  }
+  return {
+    pending: hasScanSentinel || candidates.length > victims.length || stale > 0,
+    repaired,
+    stale,
+  };
+}
+
 async function handleV2Sync(url, env) {
   const cursor = parseDecimalCursor(url.searchParams.get("cursor") ?? "");
   const requestedLimit = Number(url.searchParams.get("limit") ?? "0");
   if (cursor === null || !Number.isInteger(requestedLimit) || requestedLimit < 1 || requestedLimit > MAX.v2SyncChanges) {
     return errorResponse(400, "invalid_page", "cursor must be decimal and limit must be 1-8");
   }
-  const rows = (await env.DB.prepare(
-    "SELECT cursor, change_type, payload_json FROM v2_changes WHERE cursor > ?1 ORDER BY cursor LIMIT ?2",
-  ).bind(cursor, requestedLimit).all()).results ?? [];
+  const repair = await reconcileV2Deliveries(env, nowIso());
+  if (repair.pending) {
+    return errorResponse(503, "repair_pending", "bounded Inbox repair is still converging; retry without advancing cursor", {
+      "Retry-After": "1",
+    });
+  }
+  const snapshot = await env.DB.batch([
+    env.DB.prepare("SELECT COUNT(*) AS live_count FROM v2_deliveries"),
+    env.DB.prepare(
+      "SELECT cursor, change_type, payload_json FROM v2_changes WHERE cursor > ?1 ORDER BY cursor LIMIT ?2",
+    ).bind(cursor, requestedLimit + 1),
+  ]);
+  const liveCount = Number(snapshot[0]?.results?.[0]?.live_count ?? -1);
+  if (!Number.isInteger(liveCount) || liveCount < 0) throw new Error("V2 live count snapshot is invalid");
+  if (liveCount > MAX.v2LiveDeliveries) {
+    return errorResponse(503, "repair_pending", "Inbox changed during bounded repair; retry without advancing cursor", {
+      "Retry-After": "1",
+    });
+  }
+  const selectedRows = snapshot[1]?.results ?? [];
+  const hasMore = selectedRows.length > requestedLimit;
+  const rows = selectedRows.slice(0, requestedLimit);
   const deliveries = [];
   const tombstones = [];
   let nextCursor = cursor;
@@ -202,14 +354,12 @@ async function handleV2Sync(url, env) {
     else throw new Error("unknown stored V2 change type");
     nextCursor = String(row.cursor);
   }
-  const later = await env.DB.prepare("SELECT cursor FROM v2_changes WHERE cursor > ?1 ORDER BY cursor LIMIT 1")
-    .bind(nextCursor).first();
   const deviceId = isSafeId(env.DEVICE_ID) ? env.DEVICE_ID : "x3-reference";
   const body = JSON.stringify({
     schema: 2,
     device_id: deviceId,
     cursor: nextCursor,
-    has_more: later !== null,
+    has_more: hasMore,
     deliveries,
     tombstones,
   });
@@ -369,13 +519,18 @@ async function handleAdminV2Delete(env, itemId) {
   };
   const tombstoneJson = JSON.stringify(tombstone);
   const results = await env.DB.batch([
-    env.DB.prepare("DELETE FROM v2_changes WHERE item_id = ?1").bind(itemId),
     env.DB.prepare(
-      "INSERT INTO v2_changes (item_id, change_type, payload_json) SELECT ?2, 'tombstone', ?1 WHERE EXISTS (SELECT 1 FROM v2_deliveries WHERE item_id = ?2 AND revision = ?3)",
-    ).bind(tombstoneJson, itemId, row.revision),
-    env.DB.prepare("DELETE FROM v2_deliveries WHERE item_id = ?1 AND revision = ?2").bind(itemId, row.revision),
+      "INSERT OR REPLACE INTO v2_changes (item_id, change_type, payload_json) " +
+      "SELECT item_id, 'tombstone', ?1 FROM v2_deliveries " +
+      "WHERE item_id = ?2 AND delivery_id = ?3 AND revision = ?4",
+    ).bind(tombstoneJson, itemId, row.delivery_id, row.revision),
+    env.DB.prepare(
+      "DELETE FROM v2_deliveries WHERE item_id = ?1 AND delivery_id = ?2 AND revision = ?3",
+    ).bind(itemId, row.delivery_id, row.revision),
   ]);
-  if (d1Changes(results[1]) !== 1 || d1Changes(results[2]) !== 1) throw new Error("delivery changed during tombstone transaction");
+  if (d1Changes(results[0]) !== 1 || d1Changes(results[1]) !== 1) {
+    throw new Error("delivery changed during tombstone transaction");
+  }
   return jsonResponse({ schema: 2, tombstone }, 200);
 }
 

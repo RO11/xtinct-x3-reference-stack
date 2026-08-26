@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { X3NetworkModel } from "../web/network-model.js";
+import { MAX_INBOX_ITEMS, X3NetworkModel } from "../web/network-model.js";
 
 const simulatorRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 let serverProcess;
@@ -157,6 +157,126 @@ test("cursor paging commits 8/8/2 pages and applies the final tombstone", async 
   assert.deepEqual(
     status.requests.filter(request => request.path === "/v2/sync").map(request => request.detail),
     ["cursor=0&limit=8", "cursor=8&limit=8", "cursor=16&limit=8"]
+  );
+});
+
+test("the ten-page safety cap reports catch-up pending instead of current", async () => {
+  const requests = [];
+  const fakeFetch = async input => {
+    const url = new URL(input);
+    requests.push(`${url.pathname}?${url.searchParams.toString()}`);
+    if (url.pathname === "/v2/acks") {
+      return new Response(JSON.stringify({ schema: 2, accepted: 1, duplicates: 0, rejected: 0 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    assert.equal(url.pathname, "/v2/sync");
+    const cursor = Number(url.searchParams.get("cursor"));
+    const tombstones = Array.from({ length: 8 }, (_, index) => {
+      const sequence = cursor + index + 1;
+      return {
+        delivery_id: `delivery-${sequence}`,
+        item_id: `item-${sequence}`,
+        revision: sequence.toString(16).padStart(64, "0"),
+        deleted_at: "2026-08-12T08:00:00Z"
+      };
+    });
+    return new Response(JSON.stringify({
+      schema: 2,
+      device_id: "sim-x3-main",
+      cursor: String(cursor + tombstones.length),
+      has_more: true,
+      deliveries: [],
+      tombstones
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+  const client = new X3NetworkModel(fakeFetch, "https://firmware.test");
+  const result = await client.syncInbox();
+  assert.equal(result.pages, 10);
+  assert.equal(result.cursor, "80");
+  assert.equal(result.complete, false);
+  assert.equal(result.result, "CATCH_UP_PENDING");
+  assert.equal(requests.filter(request => request.startsWith("/v2/sync?")).length, 10);
+});
+
+test("a partial V1 manifest is rejected before it can replace the fixed cache", async () => {
+  const partial = {
+    schema: 1,
+    etag: '"partial"',
+    cards: ["market-briefing", "weekday-freelancer-scan", "3d-job-search"].map((id, index) => ({
+      id,
+      revision: String(index + 1).repeat(32),
+      url: `/v1/cards/${id}.json`
+    }))
+  };
+  const client = new X3NetworkModel(
+    async () => new Response(JSON.stringify(partial), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ETag: partial.etag }
+    }),
+    "https://firmware.test"
+  );
+  await assert.rejects(client.syncCards(), error => error.result === "INVALID_DATA");
+  assert.equal(client.cards().length, 0);
+});
+
+test("an over-capacity modeled cache still exposes its newest bounded page set", () => {
+  const client = model();
+  for (let index = 0; index < 65; index += 1) {
+    client.inboxMetadata.set(`item-${index}`, {
+      delivery_id: `delivery-${index}`,
+      item_id: `item-${index}`,
+      module_id: "inbox",
+      kind: "text",
+      title: `Item ${index}`,
+      revision: String(index + 1).padStart(64, "0"),
+      sha256: String(index + 1).padStart(64, "0"),
+      bytes: 1,
+      mime: "text/plain; charset=utf-8",
+      created_at: `2026-08-12T08:${String(index).padStart(2, "0")}:00Z`,
+      state: "new",
+      actions: []
+    });
+  }
+  assert.equal(client.inbox().length, 64);
+  assert.equal(client.inbox().some(item => item.itemId === "item-0"), false);
+});
+
+test("81 live Inbox changes pause after ten pages, keep newest 64 visible, then converge", async () => {
+  await selectScenario("catch-up-81");
+  const client = model();
+
+  const first = await client.syncInbox();
+  assert.equal(first.result, "CATCH_UP_PENDING");
+  assert.equal(first.pages, 10);
+  assert.equal(first.cursor, "80");
+  assert.equal(first.complete, false);
+  assert.equal(client.status().inboxCached, 80);
+  assert.equal(client.inbox().length, MAX_INBOX_ITEMS);
+  assert.equal(client.inbox()[0].itemId, "sim-inbox-80");
+  assert.equal(client.inbox().at(-1).itemId, "sim-inbox-17");
+  assert.match(client.documentText("sim-inbox-65"), /complete synthetic long-form content/);
+
+  const second = await client.syncInbox();
+  assert.equal(second.result, "UPDATED");
+  assert.equal(second.pages, 1);
+  assert.equal(second.cursor, "81");
+  assert.equal(second.complete, true);
+  assert.equal(client.status().inboxCached, 81);
+  assert.equal(client.inbox().length, MAX_INBOX_ITEMS);
+  assert.equal(client.inbox()[0].itemId, "sim-inbox-81");
+  assert.equal(client.inbox().at(-1).itemId, "sim-inbox-18");
+
+  const status = await serverStatus();
+  assert.equal(status.request_counts["GET /v2/sync"], 11);
+  assert.deepEqual(
+    status.requests.filter(request => request.path === "/v2/sync").map(request => request.detail),
+    [
+      "cursor=0&limit=8", "cursor=8&limit=8", "cursor=16&limit=8", "cursor=24&limit=8",
+      "cursor=32&limit=8", "cursor=40&limit=8", "cursor=48&limit=8", "cursor=56&limit=8",
+      "cursor=64&limit=8", "cursor=72&limit=8", "cursor=80&limit=8"
+    ]
   );
 });
 

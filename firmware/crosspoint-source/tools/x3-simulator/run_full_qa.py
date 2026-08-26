@@ -614,11 +614,16 @@ def main() -> int:
                          "test/daily_cards_render_wait/verify_source_contract.py",
                          "--self-test"],
                         PROJECT_ROOT))
+    commands.append(run("content-recovery-source-contract",
+                        [sys.executable, "-B",
+                         "test/xtinct_content_recovery/verify_source_contract.py"],
+                        PROJECT_ROOT))
     passed_gates.update({
         "resource-source", "resource-self-test", "outbox-memory-source-contract",
         "public-credential-source-contract", "epub-source-contract",
         "epub-source-contract-mutations", "sleep-refresh-source-contract",
         "daily-cards-render-wait-source-contract",
+        "content-recovery-source-contract",
     })
     initial_sleep_assets = sleep_asset_evidence()
     initial_release_support = release_support_evidence()

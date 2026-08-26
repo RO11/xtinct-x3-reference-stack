@@ -213,9 +213,9 @@ WEB_SERVER_PARSER_LIMITS = {
     "target_bytes": 768,
 }
 ELF_DEBUG_STRIP_LINK_FLAG = "-Wl,--strip-debug"
-READY_RELEASE_LABEL = "v1.6.2-xtinct.1"
-READY_BUILD_ID = "BUILD-162-XTINCT1-PUBLIC"
-READY_VERSION = "1.6.2-xtinct.1"
+READY_RELEASE_LABEL = "v1.6.2-xtinct.2"
+READY_BUILD_ID = "BUILD-162-XTINCT2-PUBLIC"
+READY_VERSION = "1.6.2-xtinct.2"
 ALLOWED_GATTC_PERIPHERAL_HOST_SYMBOLS = frozenset({
     "ble_gattc_connection_broken",
     "ble_gattc_indicate_custom",

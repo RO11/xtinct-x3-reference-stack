@@ -382,7 +382,17 @@ void InboxActivity::applyAction(const std::string& action) {
 void InboxActivity::loop() {
   if (state == State::SYNCING && !syncStarted) {
     syncStarted = true;
-    requestUpdateAndWait();
+    if (!requestUpdateAndWait()) {
+      // Do not start Wi-Fi/TLS while an unconfirmed E-Ink render may still own
+      // the framebuffer, font cache or SD card. Existing verified Inbox items
+      // remain usable and the user can retry from Actions.
+      LOG_ERR("XSYNC", "Inbox refresh cancelled: busy screen was not confirmed");
+      syncResult = XtinctSyncClient::SyncResult::NETWORK_ERROR;
+      statusMessage = "Refresh cancelled: display busy";
+      state = State::READY;
+      requestUpdate();
+      return;
+    }
     runSync();
     return;
   }

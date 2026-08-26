@@ -48,6 +48,9 @@ export const MAX = Object.freeze({
   v2MetadataBytes: 2 * 1024,
   v2SyncChanges: 8,
   v2SyncBytes: 28 * 1024,
+  v2LiveDeliveries: 64,
+  v2ReconcileItems: 24,
+  v2ReconcileScan: 88,
   v2AckEvents: 24,
   v2AckBytes: 16 * 1024,
   v2AckEventDataBytes: 1024,
@@ -339,4 +342,3 @@ export function parseDecimalCursor(value) {
   const parsed = BigInt(value);
   return parsed <= 9_223_372_036_854_775_807n ? value : null;
 }
-

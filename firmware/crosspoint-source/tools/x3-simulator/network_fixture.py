@@ -33,6 +33,7 @@ SCENARIOS: dict[str, str] = {
     "happy-path": "Complete V1 and V2 download with valid reports and artifacts.",
     "cache-current": "Valid data with ETag/unchanged revisions for cache-first repeat sync.",
     "pagination": "Eighteen ordered V2 changes across 8/8/2 cursor pages, including a tombstone.",
+    "catch-up-81": "Eighty-one ordered V2 deliveries require a second bounded ten-page sync to converge.",
     "http-503": "V1 manifest and V2 sync return an HTTP 503 service failure.",
     "malformed-payload": "V1 and V2 return syntactically valid JSON that violates their schemas.",
     "artifact-failure-once": "The second V2 artifact request fails with 503; the committed prefix survives and retry succeeds.",
@@ -177,6 +178,7 @@ class NetworkCorpus:
     cards: dict[str, bytes]
     reports: dict[tuple[str, str], bytes]
     changes: tuple[dict[str, Any], ...]
+    catch_up_changes: tuple[dict[str, Any], ...]
     artifacts: dict[str, bytes]
     artifact_mimes: dict[str, str]
 
@@ -219,6 +221,18 @@ def _build_corpus() -> NetworkCorpus:
             },
         }
     )
+
+    catch_up_changes: list[dict[str, Any]] = []
+    for index in range(1, 82):
+        delivery, artifact = _build_delivery(index)
+        # Later cursor sequences are newer in this focused catch-up stream.
+        # The distinct valid timestamps make the newest-64 fallback observable.
+        delivery["created_at"] = f"2026-08-12T{6 + index // 60:02d}:{index % 60:02d}:00+10:00"
+        digest = str(delivery["sha256"])
+        artifacts[digest] = artifact
+        artifact_mimes[digest] = str(delivery["mime"])
+        catch_up_changes.append({"sequence": index, "delivery": delivery})
+
     return NetworkCorpus(
         manifest=manifest,
         manifest_body=manifest_body,
@@ -226,6 +240,7 @@ def _build_corpus() -> NetworkCorpus:
         cards=card_bodies,
         reports=reports,
         changes=tuple(changes),
+        catch_up_changes=tuple(catch_up_changes),
         artifacts=artifacts,
         artifact_mimes=artifact_mimes,
     )
@@ -335,7 +350,12 @@ def sync_page(cursor_text: str, limit_text: str, scenario: str) -> dict[str, Any
     limit = int(limit_text)
     if cursor < 0 or not 1 <= limit <= 8:
         raise ValueError("Cursor or limit is outside the firmware contract")
-    source = CORPUS.changes if scenario == "pagination" else CORPUS.changes[:4]
+    if scenario == "pagination":
+        source = CORPUS.changes
+    elif scenario == "catch-up-81":
+        source = CORPUS.catch_up_changes
+    else:
+        source = CORPUS.changes[:4]
     available = [change for change in source if int(change["sequence"]) > cursor]
     selected = available[:limit]
     next_cursor = int(selected[-1]["sequence"]) if selected else cursor

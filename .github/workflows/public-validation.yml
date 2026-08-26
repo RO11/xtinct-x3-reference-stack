@@ -28,6 +28,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -B test/xtinct_feed_credential_policy/verify_source_contract.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B test/xtinct_content_recovery/verify_source_contract.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Simulator unit and contract tests
         working-directory: firmware/crosspoint-source/tools/x3-simulator
         shell: pwsh

@@ -276,7 +276,7 @@ def run_frozen_prebuild_qa(project: Path, core: Path, source_sha256: str) -> dic
         "behavior-model", "crash-security", "file-transfer-security", "native-contracts",
         "network-simulator", "pocket-security", "resource-source", "simulator-js",
         "sleep-asset", "sleep-refresh-source-contract", "source-contracts",
-        "today-epub", "ui-surface",
+        "today-epub", "ui-surface", "content-recovery-source-contract",
     }
     require(required_gates.issubset(set(value.get("passed_gates", []))),
             "Frozen X3 QA report omitted a mandatory prebuild gate")

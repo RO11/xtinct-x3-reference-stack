@@ -77,7 +77,7 @@ public static class XtinctUsbFeedCommand
     private const int TokenMaximumLength = 256;
     private const int CommandPrefixLength = 16; // ASCII length of CMD:XTINCT_FEED:
     private const int OriginMaximumLength = 192;
-    private const string ExpectedIdentity = "OK:XTINCT_IDENTITY:X3:BUILD-162-XTINCT1-PUBLIC";
+    private const string ExpectedIdentity = "OK:XTINCT_IDENTITY:X3:BUILD-162-XTINCT2-PUBLIC";
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct CREDENTIAL

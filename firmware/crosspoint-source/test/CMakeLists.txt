@@ -50,6 +50,10 @@ add_test(
   NAME x3_resource_budget_checker_self_test
   COMMAND ${Python3_EXECUTABLE} -B ${REPO_ROOT}/scripts/check_x3_resource_budgets.py --self-test
 )
+add_test(
+  NAME xtinct_content_recovery_source_contract
+  COMMAND ${Python3_EXECUTABLE} -B ${REPO_ROOT}/test/xtinct_content_recovery/verify_source_contract.py
+)
 
 add_subdirectory(streaming_json_parser)
 add_subdirectory(release_json_parser)

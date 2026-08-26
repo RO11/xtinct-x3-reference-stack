@@ -42,6 +42,7 @@ class XtinctSyncClient {
   enum class SyncResult : uint8_t {
     UPDATED,
     CURRENT,
+    CATCH_UP_PENDING,
     NO_CONFIG,
     NO_WIFI,
     UNAUTHORIZED,
@@ -68,8 +69,8 @@ class XtinctSyncClient {
   static bool invalidateInboxFastPage();
   static bool refreshInboxFastPage();
   // True only when the durable cursor is covered by a complete V2 sync marker
-  // for the reader's current configured local day. UPDATED/CURRENT alone are
-  // insufficient because the bounded page cap can leave a partial sync.
+  // for the reader's current configured local day. CATCH_UP_PENDING is
+  // explicitly incomplete; UPDATED/CURRENT still require this durable marker.
   static bool isInboxSyncCompleteToday();
   static bool queueReaderProgress(const std::string& artifactPath, uint16_t progress, bool bookmark = false,
                                   bool bookmarkRemoved = false);

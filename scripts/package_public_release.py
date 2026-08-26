@@ -88,6 +88,7 @@ PREBUILD_REQUIRED_GATES = {
     "today-epub", "ui-surface", "i18n", "outbox-memory-source-contract",
     "public-credential-source-contract", "epub-source-contract",
     "epub-source-contract-mutations", "daily-cards-render-wait-source-contract",
+    "content-recovery-source-contract",
     "behavior-pocket-models",
 }
 POSTBUILD_REQUIRED_GATES = PREBUILD_REQUIRED_GATES | {

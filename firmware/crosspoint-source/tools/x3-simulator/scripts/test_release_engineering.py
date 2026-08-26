@@ -65,7 +65,7 @@ class ReleaseEngineeringTests(unittest.TestCase):
         self.assertEqual(
             [],
             scan_text_value(
-                "BUILD-162-XTINCT1-PUBLIC",
+                "BUILD-162-XTINCT2-PUBLIC",
                 Path("release-profile.json"),
             ),
         )
