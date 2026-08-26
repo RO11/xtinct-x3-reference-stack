@@ -2059,8 +2059,8 @@ def verify_private_libdeps_hook_text(jpeg: str, wolfssl: str) -> None:
         'Path(env.subst("$PROJECT_LIBDEPS_DIR"))',
         '"JPEGDEC hook refuses the shared project .pio/libdeps cache"',
         'not os.path.lexists(library / ".git")',
-        'PATCHED_JPEG_INL_BYTES = 252_625',
-        'PATCHED_JPEG_INL_SHA256 = "fd5d20da6e01d7900c6b48413bb1b19ed10fe82960231c28346c353820e78967"',
+        'PATCHED_JPEG_INL_BYTES = 247_258',
+        'PATCHED_JPEG_INL_SHA256 = "98668ee2df0b8da33fe37ddd9715e42ddd40972626b477539d1ce6253f43de33"',
         'actual_patch_names == set(PATCH_SPECS)',
         '"PATCH_JPEGDEC_SELF_TEST_OK"',
     )
