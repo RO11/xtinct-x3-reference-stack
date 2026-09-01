@@ -41,6 +41,16 @@ These are direct native 528×792 modeled framebuffers, not browser crops or enla
 
 The screens are intentionally shown at useful width rather than squeezed side-by-side into a Markdown table.
 
+### Fictional market card with source provenance
+
+<a href="docs/images/daily-cards-v1-market-briefing-528x792.png"><img src="docs/images/engagement/daily-cards-v1-market-briefing-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 market briefing with fictional values and a visible ChatGPT plus Interactive Brokers app producer path"></a>
+
+This screen makes the production source pattern explicit: ChatGPT can use the official Interactive Brokers app for read-only portfolio and market evidence, then publish a bounded V1 Market Briefing. To reproduce it, connect **Interactive Brokers** from ChatGPT's **Settings → Apps** through IBKR's own sign-in screen, keep the producer prompt analysis-only, remove account/order identifiers and raw connector output, then submit the completed brief through the owned V1 `market-briefing` handoff. See the [Interactive Brokers AI Hub](https://www.interactivebrokers.com/en/trading/ai-hub.php) and [OpenAI Apps guide](https://help.openai.com/en/articles/11487775-connectors-in-chatgpt). The public fixture itself does not connect to a brokerage account, contains no real holding or quote, and cannot place a trade.
+
+### Implemented module map
+
+<a href="docs/images/engagement/xtinct-implemented-content-map-2400x1740.png"><img src="docs/images/engagement/xtinct-implemented-content-map-2400x1740.png" width="1200" alt="High-resolution sanitized map of the implemented Daily Cards V1, Inbox V2, Today and system modules"></a>
+
 ### Inbox V2 preview
 
 <a href="docs/images/inbox-v2-default-preview-528x792.png"><img src="docs/images/engagement/inbox-v2-default-preview-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 Inbox V2 preview for the fictional Spark serial The Paper City"></a>
@@ -53,22 +63,41 @@ The screens are intentionally shown at useful width rather than squeezed side-by
 
 <a href="docs/images/inbox-v2-open-article-528x792.png"><img src="docs/images/engagement/inbox-v2-open-article-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 reader showing the fictional Spark serial The Paper City"></a>
 
-All visible material is synthetic: an original 876-word serial, a fictional project watch card, a fictional design case study and an original puzzle page. Every person, company, project, opportunity, metric, date and event is invented. The X3 panel is low resolution by modern phone standards; the linked native files remain the honest 1:1 output, while the 2× PNGs add no interpolated detail.
+All visible material is synthetic: an original 876-word serial, a fictional market card, a fictional design case study and an original puzzle page. Every person, company, project, ticker, price, opportunity, metric, date and event is invented. The X3 panel is low resolution by modern phone standards; the linked native files remain the honest 1:1 output, while the 2× PNGs add no interpolated detail.
 
 ## How content reaches the X3
 
-```text
-AI or deterministic producer
-        |
-        | exact JSON/email/task contract
-        v
-your private relay / Worker
-        |
-        | Cards V1 + Inbox V2 over verified HTTPS
-        v
-X3 local cache -> native card, inbox, text, EPUB and sleep-screen views
-        |
-        +-> open/delete/like/dislike receipts -> retryable outbox -> relay
+V1 and V2 are separate because they solve different reading problems. V1 is a fixed four-card dashboard whose producers replace their own current status. V2 is an item inbox with immutable artifacts, cursor paging, actions, deletion state and receipts. A V1 result is never copied into V2.
+
+### Daily Cards V1 flow
+
+```mermaid
+flowchart LR
+    A[Interactive Brokers app] --> B[ChatGPT Market Briefing]
+    C[Other scheduled status producers] --> D[One owned card row each]
+    B --> D
+    D --> E[Atomic V1 handoff]
+    E --> F[Worker validation]
+    F --> G[Fixed four-card manifest]
+    G --> H[X3 Daily Cards]
+    H --> I[Verified SD cache + optional report]
+```
+
+The broker branch is analysis-only in this reference pattern: no order is placed or modified, and account or order identifiers never enter the card payload.
+
+### Inbox V2 flow
+
+```mermaid
+flowchart LR
+    A[ChatGPT exact email] --> D[One producer per job and date]
+    B[Google Spark constrained task] --> D
+    C[Grok write-only MCP] --> D
+    D --> E[Schema, provenance, bytes and SHA validation]
+    E --> F[Cursor manifest + immutable artifacts]
+    F --> G[X3 Inbox + verified SD cache]
+    G --> H[Open, delete and allowlisted feedback]
+    H --> I[Retryable receipt outbox]
+    I --> E
 ```
 
 The firmware does not contain an AI model. AI is the easiest way to generate useful daily material, but any script or service that follows the published contracts can be a producer. ChatGPT, Gemini/Spark and Grok are examples, not dependencies. Adult or sensitive material is neither bundled nor enabled by this repository; the operator controls their own private producer and relay.
