@@ -35,13 +35,25 @@ This repository is the companion to the [X3 Preview & QA Lab](https://github.com
 
 ## What the Inbox actually looks like
 
-These are native 528×792 X3 render captures, not enlarged phone mockups.
+These are direct native 528×792 modeled framebuffers, not browser crops or enlarged phone mockups. The overview uses 2× nearest-neighbor presentation so high-density displays do not soften or relocate the pixels. Click it for the full `3456 × 3688` file.
 
-| Inbox V2 feed | Opened text artifact |
-| --- | --- |
-| ![Inbox V2 feed](docs/images/inbox-v2-default-preview-528x792.png) | ![Opened text artifact](docs/images/inbox-v2-open-article-528x792.png) |
+<a href="docs/images/engagement/xtinct-x3-native-showcase-2x.png"><img src="docs/images/engagement/xtinct-x3-native-showcase-2x.png" width="1200" alt="High-resolution modeled X3 Home, Daily Cards V1, Inbox V2, Like and Dislike feedback, opened article and daily puzzle screens"></a>
 
-The X3 panel is low resolution by modern phone standards. The firmware uses the device's actual resolution and four grayscale levels; the screenshots should be viewed at 1:1 pixels for the honest result.
+The screens are intentionally shown at useful width rather than squeezed side-by-side into a Markdown table.
+
+### Inbox V2 preview
+
+<a href="docs/images/inbox-v2-default-preview-528x792.png"><img src="docs/images/engagement/inbox-v2-default-preview-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 Inbox V2 preview for the fictional Spark serial The Paper City"></a>
+
+### Like / dislike feedback
+
+<a href="docs/images/inbox-v2-feedback-actions-528x792.png"><img src="docs/images/engagement/inbox-v2-feedback-actions-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 Inbox actions menu with Like and Dislike feedback"></a>
+
+### Opened text artifact
+
+<a href="docs/images/inbox-v2-open-article-528x792.png"><img src="docs/images/engagement/inbox-v2-open-article-2x-1056x1584.png" width="528" alt="High-resolution modeled X3 reader showing the fictional Spark serial The Paper City"></a>
+
+All visible material is synthetic: an original 876-word serial, a fictional project watch card, a fictional design case study and an original puzzle page. Every person, company, project, opportunity, metric, date and event is invented. The X3 panel is low resolution by modern phone standards; the linked native files remain the honest 1:1 output, while the 2× PNGs add no interpolated detail.
 
 ## How content reaches the X3
 
