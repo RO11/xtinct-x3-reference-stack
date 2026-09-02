@@ -6,6 +6,11 @@ XTINCT separates content production, private publication and constrained device 
 
 A producer can be an AI scheduled task, an Apps Script, a local program or a manual publisher. Producers never talk directly to the X3. They emit one of the documented bounded contracts to an operator-owned relay.
 
+The public [Scheduled AI content producer guide](SCHEDULED_AI_CONTENT_PRODUCERS.md)
+shows how recurring ChatGPT/Codex, Gemini Spark, and Grok tasks can emit those
+contracts. It includes sanitized content prompts and excludes the operator's
+private Grok content prompt.
+
 Typical implemented content jobs include:
 
 - daily/weekly project watchlist cards;
@@ -15,7 +20,7 @@ Typical implemented content jobs include:
 - a three-article reading batch;
 - a Today digest EPUB;
 - generated sleep-screen candidates;
-- adult material from an explicitly adult-capable private producer.
+- operator-defined private modules that are outside this public reference.
 
 The names above describe content shapes, not bundled accounts or prompts. Public examples use synthetic people, projects, addresses and content.
 

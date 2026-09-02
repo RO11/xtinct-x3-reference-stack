@@ -145,7 +145,7 @@ The upload route checks the exact X3 native header: 528x792, uncompressed 4-bpp 
 ## Deliberate omissions
 
 - No email, Gmail, Sheets, Gemini, Grok, ChatGPT or other account integration is embedded. Those are producer adapters and should call the write routes with their own secret management.
-- No private prompts, schedules, recipient addresses, task IDs beyond the firmware's public V1 allowlist, or real content are included.
+- No private prompts, live schedule configuration, recipient addresses, task IDs beyond the firmware's public V1 allowlist, or real content are included. The repository-level [scheduled-task guide](../../docs/SCHEDULED_AI_CONTENT_PRODUCERS.md) contains only sanitized templates and provider boundaries.
 - No UI, billing, user directory or public write endpoint is provided.
 - Local tests and a successful deployment do not prove a specific X3 synced or opened content.
 

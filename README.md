@@ -10,6 +10,12 @@ candidate, not a stable firmware declaration.
 
 This repository is the companion to the [X3 Preview & QA Lab](https://github.com/RO11/x3-preview-qa-lab). The Preview Lab models and tests the experience on Windows. This repository contains the device-side source and, once every release gate passes, the exact installable X3 image built from that source.
 
+The AI producers are recurring scheduled tasks outside the firmware. The
+[Scheduled AI content producer guide](docs/SCHEDULED_AI_CONTENT_PRODUCERS.md)
+contains public-safe, copy-ready prompts and separate ChatGPT/Codex, Gemini
+Spark, and Grok delivery recipes while deliberately omitting the private Grok
+content prompt.
+
 > **Alpha software.** A passing simulator or QEMU run does not prove physical E-Ink waveforms, buttons, SD-card power-loss behavior, Wi-Fi/Bluetooth radio behavior, fragmented heap, watchdog timing, RTC wake, battery use, or recovery. Check the evidence table for the exact release before installing anything.
 
 ## What is included
@@ -101,6 +107,10 @@ flowchart LR
 ```
 
 The firmware does not contain an AI model. AI is the easiest way to generate useful daily material, but any script or service that follows the published contracts can be a producer. ChatGPT, Gemini/Spark and Grok are examples, not dependencies. Adult or sensitive material is neither bundled nor enabled by this repository; the operator controls their own private producer and relay.
+
+See [Scheduled AI content producers](docs/SCHEDULED_AI_CONTENT_PRODUCERS.md)
+for the sanitized scheduled-task prompts, exact-subject envelope pattern,
+single-owner rule, and provider-specific delivery boundaries.
 
 ## Safe first install
 
